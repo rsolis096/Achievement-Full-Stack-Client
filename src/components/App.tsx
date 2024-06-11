@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 
 import axios, {AxiosResponse} from "axios";
 
@@ -10,19 +10,13 @@ import {
   Tab,
   Grid,
   Paper,
-  Button,
   Typography,
   List,
   Box,
   ListItemButton,
-  Menu,
-  MenuItem,
-  FormControlLabel,
-  Checkbox, IconButton, FormControl, Input, InputAdornment,
-
+  IconButton, FormControl, Input, InputAdornment,
 } from "@mui/material";
 
-import SortIcon from '@mui/icons-material/Sort';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 import AchievementList from "./AchievementList.tsx";
@@ -31,13 +25,12 @@ import "../styles/App.css";
 import {Game} from "../interfaces/types.tsx";
 import GameItem from "./GameItem.tsx";
 import SearchIcon from "@mui/icons-material/Search";
+import FilterBar from "./FilterBar.tsx";
 
 function App() {
 
   //Define state variables
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [sortFilter, setSortFilter] = useState<number>(0)
-  const [currentSort, setCurrentSort] = useState<string>("Most to Least Rare")
   const [visibleFilter, setVisibleFilter] = useState<boolean[]>([false, false]);
   const [userLibraryState, setUserLibraryState] = useState<Game[]>([]);
   const [selectedGame, setSelectedGame] = useState<Game>();
@@ -87,7 +80,7 @@ function App() {
   };
 
   // Debounce when gameSearch input value is changed (see custom hook)
-  const debouncedSearchTerm = useDebounce(gameSearch, 300);
+  const debouncedSearchTerm = useDebounce(gameSearch, 200);
 
   //Post request for game lookup
   useEffect(() => {
@@ -98,36 +91,12 @@ function App() {
     }
   }, [debouncedSearchTerm]);
 
-  /*Button Handlers*/
-  const sortOpen = Boolean(anchorEl);
-
   //Handles when the user clock
   const handleExpandButton = () => {
     setGamesCount( (prevState) => {
       return prevState + 5
     })
   }
-
-  //Handles when the user clicks on a filter checkbox
-  const handleCheckBox = (index : number) => {
-    setVisibleFilter(prevState => prevState.map((item, idx) => idx === index ? !item : item))
-  }
-
-  //Handles when the user clicks on the filter drop down menu
-  const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  //Handles when the filter dropdown menu is closed
-  const handleClose = (n : number) => {
-    //Close filter when a filter choice is selected and do stuff
-    const labels = ["Most to Least Rare", "Least To Most Rare"];
-    setAnchorEl(null)
-    if(n != -1){
-      setSortFilter(n)
-      setCurrentSort(labels[n])
-    }
-  };
 
   //What happens when an item on the game list is clicked
   const handleGameClick = (game  : Game) => {
@@ -141,6 +110,17 @@ function App() {
     setGameSearch(e.target.value);
   };
 
+  //Handlers for Filter bar state updates
+  const updateSortFilterState = (n : number) => {
+    if(n != -1){
+      setSortFilter(n);
+    }
+
+  };
+
+  const updateVisibleFilterState = (index : number) => {
+    setVisibleFilter(prevState => prevState.map((item, idx) => idx === index ? !item : item))
+  };
 
   /* Helper Functions */
 
@@ -201,59 +181,11 @@ function App() {
         <Grid item xs={12} sm={8} md={9} className="achievement-list-container" >
 
             {/*Achievement List Filter Bar*/}
-            <AppBar className = "achievement-filters" position="static">
-              <Box display="flex" alignItems="center">
 
-                {/*Filter Button*/}
-                <Button
-                    id="basic-button"
-                    onClick={handleFilterClick}
-                    variant="contained"
-                    startIcon = {<SortIcon />}
-                >
-                  {currentSort}
-                </Button>
-
-                {/*Sort Button Dropdown menu*/}
-                <Menu
-                    id="basic-menu"
-                    anchorEl={anchorEl}
-                    open={sortOpen}
-                    onClose={() => handleClose(-1)}
-                >
-                  <MenuItem onClick={() =>handleClose(0)}>Most to Least Rare</MenuItem>
-                  <MenuItem onClick={() =>handleClose(1)}>Least to Most Rare</MenuItem>
-                </Menu>
-
-                {/*Hide Locked Checkbox*/}
-                  <FormControlLabel
-                      control={
-                        <Checkbox
-                            name="Show Locked"
-                            onChange = {() => handleCheckBox(0)}
-                            style = {{color: "white"}}
-                            sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
-                        />
-                      }
-                      label="Hide Locked"
-                      style={{ marginLeft: '10px' }} // Adjust spacing as needed
-                  />
-
-                  <FormControlLabel
-                      control={
-                        <Checkbox
-                            name="Show Locked"
-                            onChange = {() => handleCheckBox(1)}
-                            style = {{color: "white"}}
-                            sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
-                        />
-                      }
-                      label="Hide Unlocked"
-                      style={{ marginLeft: '10px' }} // Adjust spacing as needed
-                  />
-
-              </Box>
-            </AppBar>
+            <FilterBar
+                setSortFilterP={updateSortFilterState}
+                setVisibleFilterP= {updateVisibleFilterState}
+            />
 
             {/*Achievement List Display Box*/}
             <Box >
@@ -270,6 +202,16 @@ function App() {
               ) : (
                   <Typography variant="body1">Select a game to see achievements.</Typography>
               )}
+
+              {gameSearchList.length > 0 ? (
+                  <ul>
+                    {gameSearchList.map((game, index) => (
+                        <li key={index}>{game.name}</li>
+                    ))}
+                  </ul>
+              ) : (<p>nothing</p>)
+              }
+
             </Box>
 
         </Grid>
