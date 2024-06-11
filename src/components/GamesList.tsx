@@ -9,6 +9,8 @@ import {
     Paper,
     Typography
 } from "@mui/material";
+
+import "../styles/GamesList.css"
 import SearchIcon from "@mui/icons-material/Search";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import {ChangeEvent, useEffect, useState} from "react";
@@ -20,7 +22,6 @@ import useDebounce from "../hooks/useDebounce.tsx";
 interface GamesListProps {
     setSelectedGame: (game:Game) => void
 }
-
 
 function GamesList(props : GamesListProps): JSX.Element {
 

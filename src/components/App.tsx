@@ -9,7 +9,6 @@ import {
   Box
 } from "@mui/material";
 
-
 import AchievementList from "./AchievementList.tsx";
 
 import "../styles/App.css";
@@ -17,6 +16,7 @@ import "../styles/App.css";
 import FilterBar from "./FilterBar.tsx";
 import GamesList from "./GamesList.tsx";
 import {Game} from "../interfaces/types.tsx";
+import TitleBar from "./TitleBar.tsx";
 
 function App() {
 
@@ -66,6 +66,9 @@ function App() {
         {/*Achievements*/}
         <Grid item xs={12} sm={8} md={9} className="achievement-list-container" >
 
+            {/*Game Title*/}
+            {selectedGame && (<TitleBar currentGame = {selectedGame}/>)}
+
             {/*Achievement List Filter Bar*/}
             <FilterBar
                 setSortFilterP={updateSortFilterState}
@@ -82,6 +85,7 @@ function App() {
                       name={selectedGame.name}
                       appid={selectedGame.appid}
                       items={selectedGame.achievements}
+                      game={selectedGame}
                       sort = {sortFilter}
                       visibleItems = {visibleFilter}
                   />

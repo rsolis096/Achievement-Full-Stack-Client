@@ -7,7 +7,7 @@ import AchievementItem from "./AchievementItem";
 
 import axios, {AxiosResponse} from "axios";
 
-import {Achievement, GlobalAchievement, TotalAchievement,} from "../interfaces/types";
+import {Game, Achievement, GlobalAchievement, TotalAchievement,} from "../interfaces/types";
 
 import "../styles/AchievementList.css";
 
@@ -18,6 +18,7 @@ interface AchievementListProps {
   name: string;
   sort : number;
   visibleItems: boolean[];
+  game: Game;
 }
 
 function AchievementList(props: AchievementListProps) {
@@ -133,7 +134,7 @@ function AchievementList(props: AchievementListProps) {
                             }
 
                         })
-                        .map((a) => <AchievementItem key={a.apiname} data={a} />)
+                        .map((a) => <AchievementItem key={a.apiname} data={a} game = {props.game}/>)
                     }
                 </div>
             ) : <div>No user achievements found.</div>}

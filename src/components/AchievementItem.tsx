@@ -1,10 +1,11 @@
-import { TotalAchievement } from "../interfaces/types";
+import { TotalAchievement, Game } from "../interfaces/types";
 import {Grid, Paper, Typography} from "@mui/material";
 import "../styles/AchievementItem.css";
 
 
 interface AchievementItemProps {
   data: TotalAchievement;
+  game: Game;
 }
 
 function AchievementItem(props: AchievementItemProps) {
@@ -33,6 +34,8 @@ function AchievementItem(props: AchievementItemProps) {
                 <Typography variant="body2">Game: {props.data.achievementinfo?.name}</Typography>
                 <Typography variant="body2">User: {props.data.apiname}</Typography>
                 <Typography variant="body2">Global: {props.data.globaldata?.name}</Typography>
+                <Typography variant="body2">Playtime: {(props.game.playtime_forever / 60).toFixed(1)} hours</Typography>
+
             </Grid>
       </Paper>
     </>

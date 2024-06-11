@@ -4,6 +4,7 @@
 import {AppBar, Box, Button, Checkbox, FormControlLabel, Menu, MenuItem} from "@mui/material";
 import SortIcon from "@mui/icons-material/Sort";
 import React, {useState} from "react";
+import "../styles/FilterBar.css"
 
 interface FilterBarProps {
     setSortFilterP: (type : number) => void,
