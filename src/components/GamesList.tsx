@@ -143,14 +143,17 @@ function GamesList(props : GamesListProps): JSX.Element {
                 {/*Game List*/}
                 <List>{gameDisplayType == "default" ? gameItemsDefault : gameItemsSearch}</List>
 
-                <IconButton
-                    className = "expand-game-list-button"
-                    style = {{color: "white"}}
-                    size = "large"
-                    onClick = {handleExpandButton}
-                >
-                    <AddCircleOutlineIcon />
-                </IconButton>
+                {gameDisplayType == "default" &&
+                    <IconButton
+                        className = "expand-game-list-button"
+                        style = {{color: "white"}}
+                        size = "large"
+                        onClick = {handleExpandButton}
+                    >
+                        <AddCircleOutlineIcon />
+                    </IconButton>
+                }
+
             </Paper>
 
         </Grid>
