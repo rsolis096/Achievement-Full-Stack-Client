@@ -28,6 +28,7 @@ function GamesList(props : GamesListProps): JSX.Element {
     const [gameCount, setGamesCount] = useState<number>(10)
     const [gameSearch, setGameSearch] = useState<string>("")
     const [gameSearchList, setGameSearchList] = useState<Game[]>([])
+    const [gameDisplayType, setGameDisplayType] = useState<string>("default");
 
     //Fetch the game data from the server (API or Database determined by server)
     useEffect(() => {
@@ -49,6 +50,7 @@ function GamesList(props : GamesListProps): JSX.Element {
         };
         fetchData();
     }, [gameCount]);
+
     //SEARCH FUNCTIONALITY Used by useEffect hook to fetch user data
     const fetchData = async () => {
         try {
@@ -63,7 +65,6 @@ function GamesList(props : GamesListProps): JSX.Element {
             );
             //YOU MUST DO SOMETHING WITH THE RESPONSE
             setGameSearchList(response.data);
-            console.log(gameSearchList)
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -76,8 +77,10 @@ function GamesList(props : GamesListProps): JSX.Element {
     useEffect(() => {
         if (debouncedSearchTerm) {
             fetchData();
+            setGameDisplayType("search")
         } else {
             setGameSearchList([]); // Clear the search list if the search term is empty
+            setGameDisplayType("default")
         }
     }, [debouncedSearchTerm]);
 
@@ -101,24 +104,23 @@ function GamesList(props : GamesListProps): JSX.Element {
         props.setSelectedGame(game);
     };
 
-    //Display the selectable games for the left column
-    const gameItems = userLibraryState.map((item) => (
+    //Iterate over default order of user library, display it on games list
+    const gameItemsDefault  = userLibraryState.map((item) => (
+
+            <ListItemButton key={item.appid} onClick={() => handleGameClick(item)}>
+                <GameItem key={item.appid} game={item}/>
+            </ListItemButton>
+    ));
+
+    //Iterate over search results, display it on games list
+    const gameItemsSearch  = gameSearchList.map((item) => (
         <ListItemButton key={item.appid} onClick={() => handleGameClick(item)}>
-            <GameItem key={item.appid} game={item} />
+            <GameItem key={item.appid} game={item}/>
         </ListItemButton>
     ));
 
     return (
         <Grid item xs={12} sm={4} md={3} >
-
-            {gameSearchList.length > 0 ? (
-                <ul style={{color: "white"}}>
-                    {gameSearchList.map((game, index) => (
-                        <li key={index}>{game.name}</li>
-                    ))}
-                </ul>
-            ) : (<p>Game Searches will appear here</p>)
-            }
 
             <Paper elevation = {3} className="game-list-container">
                 <Typography style = {{color : "white"}} variant="h5">Games</Typography>
@@ -139,7 +141,8 @@ function GamesList(props : GamesListProps): JSX.Element {
                 </FormControl>
 
                 {/*Game List*/}
-                <List>{gameItems}</List>
+                <List>{gameDisplayType == "default" ? gameItemsDefault : gameItemsSearch}</List>
+
                 <IconButton
                     className = "expand-game-list-button"
                     style = {{color: "white"}}
