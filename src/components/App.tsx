@@ -2,6 +2,8 @@ import React, {ChangeEvent, useEffect, useState} from "react";
 
 import axios, {AxiosResponse} from "axios";
 
+import useDebounce from '../hooks/useDebounce.tsx';
+
 import {
   AppBar,
   Tabs,
@@ -64,35 +66,40 @@ function App() {
     fetchData();
   }, [gameCount]);
 
+  //Used by useEffect hook to fetch user data
+  const fetchData = async () => {
+    try {
+      const response: AxiosResponse<Game[]> = await axios.post(
+          "http://localhost:3000/api/games/getGames/search",
+          {
+            lookup: gameSearch,
+            headers: {
+              "Content-Type": "application/json",
+            }
+          }
+      );
+      //YOU MUST DO SOMETHING WITH THE RESPONSE
+      setGameSearchList(response.data);
+      console.log(gameSearchList)
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  // Debounce when gameSearch input value is changed (see custom hook)
+  const debouncedSearchTerm = useDebounce(gameSearch, 300);
 
   //Post request for game lookup
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response: AxiosResponse<Game[]> = await axios.post(
-            "http://localhost:3000/api/games/getGames/search",
-            {
-              lookup: gameSearch,
-              headers: {
-                "Content-Type": "application/json",
-              }
-            }
-        );
-        //YOU MUST DO SOMETHING WITH THE RESPONSE
-        setGameSearchList(response.data);
-        console.log(gameSearchList)
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, [gameSearch]);
-
-
-  //Used to determine if filter menu is open
-  const open = Boolean(anchorEl);
+    if (debouncedSearchTerm) {
+      fetchData();
+    } else {
+      setGameSearchList([]); // Clear the search list if the search term is empty
+    }
+  }, [debouncedSearchTerm]);
 
   /*Button Handlers*/
+  const sortOpen = Boolean(anchorEl);
 
   //Handles when the user clock
   const handleExpandButton = () => {
@@ -131,7 +138,6 @@ function App() {
   //Handle changes to the search Input box
   const handleSearchBoxChange = (e: ChangeEvent<HTMLInputElement>) =>{
     //Making individual calls to the server per change doesn't work well. Need to find out what's going on or take a different approach
-    console.log("search box changes : ", e.target.value)
     setGameSearch(e.target.value);
   };
 
@@ -212,7 +218,7 @@ function App() {
                 <Menu
                     id="basic-menu"
                     anchorEl={anchorEl}
-                    open={open}
+                    open={sortOpen}
                     onClose={() => handleClose(-1)}
                 >
                   <MenuItem onClick={() =>handleClose(0)}>Most to Least Rare</MenuItem>
