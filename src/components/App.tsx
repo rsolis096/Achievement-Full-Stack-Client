@@ -1,9 +1,6 @@
 import {useState} from "react";
 
 import {
-  AppBar,
-  Tabs,
-  Tab,
   Grid,
   Typography,
   Box
@@ -47,13 +44,6 @@ function App() {
 
   return (
     <>
-      {/* Main Tabs Navigation */}
-      <AppBar position="static">
-        <Tabs value = {0} onChange = {() => {"button pressed"}}>
-          <Tab label="Steam"/>
-          <Tab label="PlayStation" />
-        </Tabs>
-      </AppBar>
 
       {/* Main Body Content */}
       <Grid container spacing={0.5} style={{ marginTop: '20px' }}>

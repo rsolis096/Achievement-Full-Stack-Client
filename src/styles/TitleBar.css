@@ -1,7 +1,24 @@
 .title-image{
-    width: 10%;
+    width: 14%;
 }
 
 .title-name{
     margin-left: 5%;
+}
+
+.title-playtime{
+    margin-left: 5%;
+}
+
+.title-unlocked{
+    margin-left: 5%;
+}
+
+
+
+.title-toolbar{
+    padding: 5px!important;
+    margin-bottom: 10px!important;
+    border-radius: 5px!important;
+    background-color: #2F3335!important;
 }

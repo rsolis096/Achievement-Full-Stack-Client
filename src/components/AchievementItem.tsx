@@ -34,7 +34,6 @@ function AchievementItem(props: AchievementItemProps) {
                 <Typography variant="body2">Game: {props.data.achievementinfo?.name}</Typography>
                 <Typography variant="body2">User: {props.data.apiname}</Typography>
                 <Typography variant="body2">Global: {props.data.globaldata?.name}</Typography>
-                <Typography variant="body2">Playtime: {(props.game.playtime_forever / 60).toFixed(1)} hours</Typography>
 
             </Grid>
       </Paper>
