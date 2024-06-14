@@ -25,20 +25,6 @@ function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false); // null indicates loading state
     const [userData, setUserData] = useState(null);
 
-    //Helper function used to get user info from server
-    const fetchUserData = async () => {
-        try {
-            console.log("Fetching user data!")
-            const response = await axios.get('https://achievement-full-stack-server.onrender.com/auth/steam/user',{
-                withCredentials: true,
-            });
-
-            setUserData(response.data);
-            console.log(response.data)
-        } catch (error) {
-            console.error('Error fetching user data:', error);
-        }
-    };
 
     //Checks If user is logged in upon page load
     useEffect(() => {
@@ -51,6 +37,7 @@ function App() {
                 if (response.data.authenticated) {
                     setIsAuthenticated(true);
                     setUserData(response.data.user);
+                    console.log(userData)
                 } else {
                     setIsAuthenticated(false);
                 }
