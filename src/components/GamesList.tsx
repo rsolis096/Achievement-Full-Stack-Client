@@ -36,7 +36,7 @@ function GamesList(props : GamesListProps): JSX.Element {
         const fetchData = async () => {
             try {
                 const response: AxiosResponse<Game[]> = await axios.post(
-                    "https://achievement-full-stack-server.onrender.com/api/games/getGames",
+                    "https://api.completiontracker.com/api/games/getGames",
                     {
                         count: gameCount,
                         headers: {
@@ -57,7 +57,7 @@ function GamesList(props : GamesListProps): JSX.Element {
     const fetchData = async () => {
         try {
             const response: AxiosResponse<Game[]> = await axios.post(
-                'https://achievement-full-stack-server.onrender.com/api/games/getGames/search"',
+                'https://api.completiontracker.com/api/games/getGames/search"',
                 {
                     lookup: gameSearch,
                     headers: {

@@ -31,7 +31,7 @@ function App() {
         const checkAuthentication = async () => {
             try {
                 console.log("Page loaded, checking server for authentication")
-                const response = await axios.get('https://achievement-full-stack-server.onrender.com/auth/steam/checkAuthenticated', {
+                const response = await axios.get('https://api.completiontracker.com/auth/steam/checkAuthenticated', {
                     withCredentials: true, // Important to include credentials
                 });
                 if (response.data.authenticated) {
@@ -49,13 +49,6 @@ function App() {
             }
         };
         checkAuthentication();
-        /*
-        //Delay 3 seconds to give the user time to read redirect message
-        const delayCheck = setTimeout(() => {
-        }, 3000);
-        // Cleanup the timeout if the component is unmounted
-        return () => clearTimeout(delayCheck);
-        */
     }, []);
 
     //Component Handlers
@@ -78,14 +71,14 @@ function App() {
     //Handle when the user hits login button
     const handleLogin = () => {
         // Redirect to backend route for Steam login
-        window.location.href = 'https://achievement-full-stack-server.onrender.com/auth/steam/login';
+        window.location.href = 'https://api.completiontracker.com/auth/steam/login';
     }
 
     //handle when the user hits the logout button
     const handleLogout = async () => {
-        window.location.href = 'https://achievement-full-stack-server.onrender.com/auth/steam/logout';
+        window.location.href = 'https://api.completiontracker.com/auth/steam/logout';
 
-        const response = await axios.get('https://achievement-full-stack-server.onrender.com/auth/steam/checkAuthenticated/', {
+        const response = await axios.get('https://api.completiontracker.com/auth/steam/checkAuthenticated/', {
             withCredentials: true, // Important to include credentials
         });
 
