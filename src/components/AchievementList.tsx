@@ -28,6 +28,7 @@ function AchievementList(props: AchievementListProps) {
     TotalAchievement[]
     >([]);
 
+
     const [loading, setLoading] = useState(true);
 
     //Make a post request to the server to get user achievement info
@@ -39,7 +40,8 @@ function AchievementList(props: AchievementListProps) {
                     appid: props.appid,
                     headers: {
                         "Content-Type": "application/json",
-                    }
+                    },
+                    withCredentials : true
                 }
             );
             setTotalData(response.data)
@@ -59,7 +61,8 @@ function AchievementList(props: AchievementListProps) {
                     appid: props.appid,
                     headers: {
                         "Content-Type": "application/json"
-                    }
+                    },
+                    withCredentials : true
                 }
             );
             //setGlobalAchievementData(response.data)
