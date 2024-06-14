@@ -79,7 +79,8 @@ function AchievementList(props: AchievementListProps) {
             //fetch user and global achievement data
             const userAchievements: TotalAchievement[] = await postUserAchievementData();
             const globalAchievements: GlobalAchievement[] = await postGlobalAchievementData();
-
+            console.log("User Achievements: ", globalAchievements)
+            console.log("GLobal Achievements: ", globalAchievements)
             //Set loading to false once everything has been fetched and set
             setLoading(false);
 
