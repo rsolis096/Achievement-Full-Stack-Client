@@ -6,8 +6,6 @@ import {
     Box, AppBar, Toolbar, Button
 } from "@mui/material";
 
-const hostName = "https://achievement-full-stack-server.onrender.com"
-
 import AchievementList from "./AchievementList.tsx";
 
 import "../styles/App.css";
@@ -31,7 +29,7 @@ function App() {
     const fetchUserData = async () => {
         try {
             console.log("Fetching user data!")
-            const response = await axios.get(hostName+'/auth/steam/user',{
+            const response = await axios.get('https://achievement-full-stack-server.onrender.com/auth/steam/user',{
                 withCredentials: true,
             });
 
@@ -47,7 +45,7 @@ function App() {
         const checkAuthentication = async () => {
             try {
 
-                const response = await axios.get(hostName+'/auth/steam/checkAuthenticated', {
+                const response = await axios.get('https://achievement-full-stack-server.onrender.com/auth/steam/checkAuthenticated', {
                     withCredentials: true, // Important to include credentials
                 });
 
@@ -98,10 +96,10 @@ function App() {
         const checkAuthentication = async () => {
             try {
                 if (!isAuthenticated) {
-                    window.location.href = hostName + '/auth/steam/login'; // Redirect to backend route for Steam login
+                    window.location.href = 'https://achievement-full-stack-server.onrender.com/auth/steam/login'; // Redirect to backend route for Steam login
 
                     //This forces a return back to the main page, calling useEffect
-                    await axios.get(hostName + '/auth/steam/checkAuthenticated', {
+                    await axios.get('https://achievement-full-stack-server.onrender.com/auth/steam/checkAuthenticated', {
                         withCredentials: true, // Important to include credentials
                     });
 
@@ -116,9 +114,9 @@ function App() {
 
     //handle when the user hits the logout button
     const handleLogout = async () => {
-        window.location.href = hostName + '/auth/steam/logout';
+        window.location.href = 'https://achievement-full-stack-server.onrender.com/auth/steam/logout';
 
-        const response = await axios.get(hostName + '/auth/steam/checkAuthenticated/', {
+        const response = await axios.get('https://achievement-full-stack-server.onrender.com/auth/steam/checkAuthenticated/', {
             withCredentials: true, // Important to include credentials
         });
 

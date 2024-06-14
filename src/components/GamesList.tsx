@@ -10,8 +10,6 @@ import {
     Typography
 } from "@mui/material";
 
-const hostname = "https://achievement-full-stack-server.onrender.com"
-
 import "../styles/GamesList.css"
 import SearchIcon from "@mui/icons-material/Search";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -38,7 +36,7 @@ function GamesList(props : GamesListProps): JSX.Element {
         const fetchData = async () => {
             try {
                 const response: AxiosResponse<Game[]> = await axios.post(
-                    hostname + "api/games/getGames",
+                    "https://achievement-full-stack-server.onrender.com/api/games/getGames",
                     {
                         count: gameCount,
                         headers: {
@@ -58,7 +56,7 @@ function GamesList(props : GamesListProps): JSX.Element {
     const fetchData = async () => {
         try {
             const response: AxiosResponse<Game[]> = await axios.post(
-                hostname +'/api/games/getGames/search"',
+                'https://achievement-full-stack-server.onrender.com/api/games/getGames/search"',
                 {
                     lookup: gameSearch,
                     headers: {
