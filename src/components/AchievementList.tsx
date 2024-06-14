@@ -7,13 +7,12 @@ import AchievementItem from "./AchievementItem";
 
 import axios, {AxiosResponse} from "axios";
 
-import {Game, Achievement, GlobalAchievement, TotalAchievement,} from "../interfaces/types";
+import {Game, GlobalAchievement, TotalAchievement,} from "../interfaces/types";
 
 import "../styles/AchievementList.css";
 
 
 interface AchievementListProps {
-  items: Achievement[];
   appid: number;
   name: string;
   sort : number;
@@ -95,7 +94,7 @@ function AchievementList(props: AchievementListProps) {
                     return {
                         ...userAchievement,
                         globaldata: globalAchievement,
-                        achievementinfo: props.items.find(item => item.name == userAchievement.apiname)
+                        achievementinfo: props.game.achievements.find(item => item.name == userAchievement.apiname)
                     };
                 });
                 console.log("Done Combining Achievements")
