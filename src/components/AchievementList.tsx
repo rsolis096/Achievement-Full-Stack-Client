@@ -85,6 +85,7 @@ function AchievementList(props: AchievementListProps) {
 
             // Combine data after both fetches are complete
             if (userAchievements.length > 0 && globalAchievements.length > 0) {
+                console.log("Combining Achievements")
                 const combinedData: TotalAchievement[] = userAchievements.map((userAchievement) => {
                     const globalAchievement = globalAchievements.find(
                         (ga) => ga.name === userAchievement.apiname
@@ -96,7 +97,7 @@ function AchievementList(props: AchievementListProps) {
                         achievementinfo: props.items.find(item => item.name === userAchievement.apiname)
                     };
                 });
-
+                console.log("Done Combining Achievements")
                 setTotalData(combinedData);
             }
         };
