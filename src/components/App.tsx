@@ -98,7 +98,7 @@ function App() {
         const checkAuthentication = async () => {
             try {
                 if (!isAuthenticated) {
-                    window.location.href = hostName + 'auth/steam/login'; // Redirect to backend route for Steam login
+                    window.location.href = hostName + '/auth/steam/login'; // Redirect to backend route for Steam login
 
                     //This forces a return back to the main page, calling useEffect
                     await axios.get(hostName + '/auth/steam/checkAuthenticated', {
