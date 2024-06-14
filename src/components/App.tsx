@@ -50,7 +50,7 @@ function App() {
                 });
                 if (response.data.authenticated) {
                     setIsAuthenticated(true);
-                    setUser(response.data.user);
+                    setUserData(response.data.user);
                 } else {
                     setIsAuthenticated(false);
                 }
