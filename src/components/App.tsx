@@ -118,7 +118,7 @@ function App() {
     const handleLogout = async () => {
         window.location.href = hostName + '/auth/steam/logout';
 
-        const response = await axios.get(hostName + 'auth/steam/checkAuthenticated/', {
+        const response = await axios.get(hostName + '/auth/steam/checkAuthenticated/', {
             withCredentials: true, // Important to include credentials
         });
 
