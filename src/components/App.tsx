@@ -35,10 +35,12 @@ function App() {
                     withCredentials: true, // Important to include credentials
                 });
                 if (response.data.authenticated) {
+                    console.log("Authenticated successfully.");
                     setIsAuthenticated(true);
                     setUserData(response.data.user);
                     console.log(userData)
                 } else {
+                    console.log("Authentication Failed")
                     setIsAuthenticated(false);
                 }
             } catch (error) {
