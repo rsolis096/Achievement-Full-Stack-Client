@@ -7,12 +7,13 @@ import AchievementItem from "./AchievementItem";
 
 import axios, {AxiosResponse} from "axios";
 
-import {Game, GlobalAchievement, TotalAchievement,} from "../interfaces/types";
+import {Game, Achievement, GlobalAchievement, TotalAchievement,} from "../interfaces/types";
 
 import "../styles/AchievementList.css";
 
 
 interface AchievementListProps {
+  items: Achievement[];
   appid: number;
   name: string;
   sort : number;
