@@ -89,7 +89,7 @@ function AchievementList(props: AchievementListProps) {
                 console.log("Combining Achievements")
                 const combinedData: TotalAchievement[] = userAchievements.map((userAchievement) => {
                     const globalAchievement = globalAchievements.find(
-                        (ga) => ga.name === userAchievement.apiname
+                        (ga) => (ga.name == userAchievement.apiname)
                     );
 
                     return {
