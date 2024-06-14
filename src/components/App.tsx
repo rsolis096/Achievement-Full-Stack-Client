@@ -98,10 +98,7 @@ function App() {
                 if (!isAuthenticated) {
                     window.location.href = 'https://achievement-full-stack-server.onrender.com/auth/steam/login'; // Redirect to backend route for Steam login
 
-                    //This forces a return back to the main page, calling useEffect
-                    await axios.get('https://achievement-full-stack-server.onrender.com/auth/steam/checkAuthenticated', {
-                        withCredentials: true, // Important to include credentials
-                    });
+                    console.log("Test Log")
 
                 }
             } catch (error) {

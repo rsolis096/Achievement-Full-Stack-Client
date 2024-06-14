@@ -41,7 +41,8 @@ function GamesList(props : GamesListProps): JSX.Element {
                         count: gameCount,
                         headers: {
                             "Content-Type": "application/json",
-                        }
+                        },
+                        withCredentials: true
                     }
                 );
                 setUserLibraryState(response.data);
