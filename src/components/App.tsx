@@ -48,15 +48,11 @@ function App() {
                 const response = await axios.get('https://achievement-full-stack-server.onrender.com/auth/steam/checkAuthenticated', {
                     withCredentials: true, // Important to include credentials
                 });
-                console.log("Authentication Response: ", response.data);
-                if (!response.data.authenticated) {
-                    //window.location.href = 'http://localhost:3000/auth/steam/login'; // Redirect to backend route for Steam login
-                    setIsAuthenticated(false);
-                    console.log("First Load Failure: ", userData)
-                } else {
+                if (response.data.authenticated) {
                     setIsAuthenticated(true);
-                    await fetchUserData();
-                    console.log("First Load  success: ", userData)
+                    setUser(response.data.user);
+                } else {
+                    setIsAuthenticated(false);
                 }
             } catch (error) {
                 console.error('Error checking authentication:', error);
@@ -91,22 +87,9 @@ function App() {
     };
 
     //Handle when the user hits login button
-    const handleLogin = async () => {
-
-        const checkAuthentication = async () => {
-            try {
-                if (!isAuthenticated) {
-                    window.location.href = 'https://achievement-full-stack-server.onrender.com/auth/steam/login'; // Redirect to backend route for Steam login
-
-                    console.log("Test Log")
-
-                }
-            } catch (error) {
-                console.error('Error checking authentication:', error);
-                setIsAuthenticated(false);
-            }
-        };
-        checkAuthentication()
+    const handleLogin = () => {
+        // Redirect to backend route for Steam login
+        window.location.href = 'https://achievement-full-stack-server.onrender.com/auth/steam/login';
     }
 
     //handle when the user hits the logout button
