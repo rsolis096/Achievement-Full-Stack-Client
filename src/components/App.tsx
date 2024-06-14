@@ -6,6 +6,9 @@ import {
     Box, AppBar, Toolbar, Button
 } from "@mui/material";
 
+const hostName = "https://achievement-full-stack-server.onrender.com"
+
+
 import AchievementList from "./AchievementList.tsx";
 
 import "../styles/App.css";
@@ -15,6 +18,7 @@ import GamesList from "./GamesList.tsx";
 import {Game} from "../interfaces/types.tsx";
 import TitleBar from "./TitleBar.tsx";
 import axios from "axios";
+import {hostname} from "node:os";
 
 function App() {
 
@@ -29,7 +33,7 @@ function App() {
     const fetchUserData = async () => {
         try {
             console.log("Fetching user data!")
-            const response = await axios.get('http://localhost:3000/auth/steam/user',{
+            const response = await axios.get(hostName+'/auth/steam/user',{
                 withCredentials: true,
             });
 
@@ -45,7 +49,7 @@ function App() {
         const checkAuthentication = async () => {
             try {
 
-                const response = await axios.get('http://localhost:3000/auth/steam/checkAuthenticated', {
+                const response = await axios.get(hostname+'/auth/steam/checkAuthenticated', {
                     withCredentials: true, // Important to include credentials
                 });
 
@@ -96,10 +100,10 @@ function App() {
         const checkAuthentication = async () => {
             try {
                 if (!isAuthenticated) {
-                    window.location.href = 'http://localhost:3000/auth/steam/login'; // Redirect to backend route for Steam login
+                    window.location.href = hostName + 'auth/steam/login'; // Redirect to backend route for Steam login
 
                     //This forces a return back to the main page, calling useEffect
-                    await axios.get('http://localhost:3000/auth/steam/checkAuthenticated', {
+                    await axios.get(hostName + '/auth/steam/checkAuthenticated', {
                         withCredentials: true, // Important to include credentials
                     });
 
@@ -114,9 +118,9 @@ function App() {
 
     //handle when the user hits the logout button
     const handleLogout = async () => {
-        window.location.href = 'http://localhost:3000/auth/steam/logout';
+        window.location.href = hostName + '/auth/steam/logout';
 
-        const response = await axios.get('http://localhost:3000/auth/steam/checkAuthenticated/', {
+        const response = await axios.get(hostName + 'auth/steam/checkAuthenticated/', {
             withCredentials: true, // Important to include credentials
         });
 
