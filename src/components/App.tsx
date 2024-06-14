@@ -8,7 +8,6 @@ import {
 
 const hostName = "https://achievement-full-stack-server.onrender.com"
 
-
 import AchievementList from "./AchievementList.tsx";
 
 import "../styles/App.css";
@@ -18,7 +17,6 @@ import GamesList from "./GamesList.tsx";
 import {Game} from "../interfaces/types.tsx";
 import TitleBar from "./TitleBar.tsx";
 import axios from "axios";
-import {hostname} from "node:os";
 
 function App() {
 
@@ -49,7 +47,7 @@ function App() {
         const checkAuthentication = async () => {
             try {
 
-                const response = await axios.get(hostname+'/auth/steam/checkAuthenticated', {
+                const response = await axios.get(hostName+'/auth/steam/checkAuthenticated', {
                     withCredentials: true, // Important to include credentials
                 });
 
