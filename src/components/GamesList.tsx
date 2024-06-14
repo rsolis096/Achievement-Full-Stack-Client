@@ -57,8 +57,9 @@ function GamesList(props : GamesListProps): JSX.Element {
     const fetchData = async () => {
         try {
             const response: AxiosResponse<Game[]> = await axios.post(
-                'https://api.completiontracker.com/api/games/getGames/search"',
+                'https://api.completiontracker.com/api/games/getGames/search',
                 {
+                    withCredentials: true,
                     lookup: gameSearch,
                     headers: {
                         "Content-Type": "application/json",
