@@ -95,7 +95,7 @@ function AchievementList(props: AchievementListProps) {
                     return {
                         ...userAchievement,
                         globaldata: globalAchievement,
-                        achievementinfo: props.items.find(item => item.name === userAchievement.apiname)
+                        achievementinfo: props.items.find(item => item.name == userAchievement.apiname)
                     };
                 });
                 console.log("Done Combining Achievements")
