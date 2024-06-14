@@ -48,7 +48,7 @@ function App() {
                 const response = await axios.get('https://achievement-full-stack-server.onrender.com/auth/steam/checkAuthenticated', {
                     withCredentials: true, // Important to include credentials
                 });
-                console.log("Authentication Response: response.data");
+                console.log("Authentication Response: ", response.data);
                 if (!response.data.authenticated) {
                     //window.location.href = 'http://localhost:3000/auth/steam/login'; // Redirect to backend route for Steam login
                     setIsAuthenticated(false);
