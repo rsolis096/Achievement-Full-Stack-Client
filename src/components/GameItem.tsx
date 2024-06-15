@@ -27,7 +27,7 @@ function GameItem(props: GameItemProps) {
                 className="game-card-image"
                 src={getImageURL(String(props.game.appid))}
               />
-              <ListItemText className="tab-title">{props.game.name}</ListItemText>
+              <ListItemText className="tab-title">{props.game.title}</ListItemText>
           </ListItemButton>
         </ListItem>
     </>
