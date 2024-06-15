@@ -12,7 +12,7 @@ import "../styles/App.css";
 
 import FilterBar from "./FilterBar.tsx";
 import GamesList from "./GamesList.tsx";
-import {Game} from "../interfaces/types.tsx";
+import {Game, SteamUser} from "../interfaces/types.tsx";
 import TitleBar from "./TitleBar.tsx";
 import axios from "axios";
 
@@ -21,7 +21,7 @@ function App() {
     //Define state variables
     const [sortFilter, setSortFilter] = useState<number>(0)
     const [visibleFilter, setVisibleFilter] = useState<boolean[]>([false, false]);
-    const [selectedGame, setSelectedGame] = useState<Game>();
+    const [selectedGame, setSelectedGame] = useState<Game>( );
     const [isAuthenticated, setIsAuthenticated] = useState(false); // null indicates loading state
     const [userData, setUserData] = useState(null);
 
@@ -31,14 +31,15 @@ function App() {
         const checkAuthentication = async () => {
             try {
                 console.log("Page loaded, checking server for authentication")
-                const response = await axios.get('https://api.completiontracker.com/auth/steam/checkAuthenticated', {
+                const response = await axios.get('http://localhost:3000/auth/steam/checkAuthenticated', {
                     withCredentials: true, // Important to include credentials
                 });
+                //The User was verified successfully
                 if (response.data.authenticated) {
                     console.log("Authenticated successfully.");
                     setIsAuthenticated(true);
                     setUserData(response.data.user);
-                    console.log(userData)
+                    console.log("Logged in as: ", response.data.user);
                 } else {
                     console.log("Authentication Failed")
                     setIsAuthenticated(false);
@@ -55,30 +56,31 @@ function App() {
 
     //GamesList Handlers
     const updateSelectedGameState = (game : Game) =>{
-    setSelectedGame(game)
+        setSelectedGame(game)
     }
 
     //FilterBar Handlers
     const updateSortFilterState = (n : number) => {
-    if(n != -1){
-      setSortFilter(n);
-    }
+        if(n != -1){
+          setSortFilter(n);
+        }
     };
+
     const updateVisibleFilterState = (index : number) => {
-    setVisibleFilter(prevState => prevState.map((item, idx) => idx === index ? !item : item))
+        setVisibleFilter(prevState => prevState.map((item, idx) => idx === index ? !item : item))
     };
 
     //Handle when the user hits login button
     const handleLogin = () => {
         // Redirect to backend route for Steam login
-        window.location.href = 'https://api.completiontracker.com/auth/steam/login';
+        window.location.href = 'http://localhost:3000/auth/steam/login';
     }
 
     //handle when the user hits the logout button
     const handleLogout = async () => {
-        window.location.href = 'https://api.completiontracker.com/auth/steam/logout';
+        window.location.href = 'http://localhost:3000/auth/steam/logout';
 
-        const response = await axios.get('https://api.completiontracker.com/auth/steam/checkAuthenticated/', {
+        const response = await axios.get('http://localhost:3000/auth/steam/checkAuthenticated/', {
             withCredentials: true, // Important to include credentials
         });
 
@@ -89,6 +91,12 @@ function App() {
             console.log("Failed to Logout");
         }
     }
+
+    //Extract steam user data from req.user
+    const extractSteamUser = (user: never): SteamUser => {
+        const { id, displayName, photos } = user;
+        return { id, displayName, photos };
+    };
 
     //Render different screen if not logged in
     if (!isAuthenticated) {
@@ -118,6 +126,7 @@ function App() {
           <AppBar position="static" style={{ marginBottom: '10px' }}>
               <Toolbar>
                   <Button variant = "contained" onClick = { () => {handleLogout()} }>Logout</Button>
+                  {userData && (<Typography>Logged in as {extractSteamUser(userData).displayName}</Typography>) }
               </Toolbar>
           </AppBar>
 
@@ -145,9 +154,6 @@ function App() {
               {selectedGame ? (
                   <AchievementList
                       key={selectedGame.appid}
-                      name={selectedGame.name}
-                      appid={selectedGame.appid}
-                      items={selectedGame.achievements}
                       game={selectedGame}
                       sort = {sortFilter}
                       visibleItems = {visibleFilter}

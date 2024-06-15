@@ -19,6 +19,7 @@ import {Game} from "../interfaces/types.tsx";
 import axios, {AxiosResponse} from "axios";
 import useDebounce from "../hooks/useDebounce.tsx";
 
+//Passed back up to App.tsx, used to display game achievement list
 interface GamesListProps {
     setSelectedGame: (game:Game) => void
 }
@@ -36,13 +37,15 @@ function GamesList(props : GamesListProps): JSX.Element {
         const fetchData = async () => {
             try {
                 const response: AxiosResponse<Game[]> = await axios.post(
-                    "https://api.completiontracker.com/api/games/getGames",
-                    {
+                    "http://localhost:3000/api/games/getUserLibrary",{
                         count: gameCount,
+
+                    },
+                    {
+                        withCredentials: true,
                         headers: {
                             "Content-Type": "application/json",
                         },
-                        withCredentials: true
                     }
                 );
                 setUserLibraryState(response.data);
@@ -57,7 +60,7 @@ function GamesList(props : GamesListProps): JSX.Element {
     const fetchData = async () => {
         try {
             const response: AxiosResponse<Game[]> = await axios.post(
-                'https://api.completiontracker.com/api/games/getGames/search',
+                'http://localhost:3000/api/games/getGames/search',
                 {
                     withCredentials: true,
                     lookup: gameSearch,
@@ -87,7 +90,6 @@ function GamesList(props : GamesListProps): JSX.Element {
         }
     }, [debouncedSearchTerm]);
 
-
     //Handle changes to the search Input box
     const handleSearchBoxChange = (e: ChangeEvent<HTMLInputElement>) =>{
         //Making individual calls to the server per change doesn't work well. Need to find out what's going on or take a different approach
@@ -108,8 +110,11 @@ function GamesList(props : GamesListProps): JSX.Element {
     };
 
     //Iterate over default order of user library, display it on games list
-    const gameItemsDefault  = userLibraryState.map((item) => (
-
+    const gameItemsDefault  = userLibraryState.filter((item) =>{
+        if(item.has_community_visible_stats){
+            return item;
+        }
+    }).map((item) => (
             <ListItemButton key={item.appid} onClick={() => handleGameClick(item)}>
                 <GameItem key={item.appid} game={item}/>
             </ListItemButton>
@@ -143,9 +148,10 @@ function GamesList(props : GamesListProps): JSX.Element {
                     />
                 </FormControl>
 
-                {/*Game List*/}
+                {/*Game List (differentiate between search results and default results*/}
                 <List>{gameDisplayType == "default" ? gameItemsDefault : gameItemsSearch}</List>
 
+                {/*Expand List Button*/}
                 {gameDisplayType == "default" &&
                     <IconButton
                         className = "expand-game-list-button"

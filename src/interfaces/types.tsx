@@ -1,6 +1,6 @@
 export interface Achievement {
-  icon: string;
   name: string;
+  icon: string;
   icongray: string;
   description: string;
   displayName: string;
@@ -20,11 +20,17 @@ export interface GlobalAchievement {
   percent: number;
 }
 
+//global_achievements is not included on the initial call and needs to be added when the game is selected
 export interface Game {
   appid: number;
-  name: string;
-  playtime_forever: number;
-  img_icon_url: string;
+  title: string;
+  playtime: number;
   has_community_visible_stats: boolean;
-  achievements: Achievement[];
+  global_achievements?: GlobalAchievement[];
+}
+
+export interface SteamUser {
+  id: string;
+  displayName: string;
+  photos: string[];
 }
