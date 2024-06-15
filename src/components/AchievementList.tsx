@@ -32,7 +32,7 @@ function AchievementList(props: AchievementListProps) {
     const postUserAchievementData = async () : Promise<TotalAchievement[]>  => {
         try{
             const response: AxiosResponse<TotalAchievement[]> = await axios.post(
-                "http://localhost:3000/api/achievements/getAchievements",
+                import.meta.env.VITE_SERVER_DOMAIN+"/api/achievements/getAchievements",
                 {
                     appid: props.game.appid,
                     headers: {"Content-Type": "application/json"}
@@ -53,7 +53,7 @@ function AchievementList(props: AchievementListProps) {
     const postGlobalAchievementData = async () : Promise<GlobalAchievement[]>  => {
         try {
             const response: AxiosResponse<GlobalAchievement[]> = await axios.post(
-                "http://localhost:3000/api/achievements/getGlobalAchievements",
+                import.meta.env.VITE_SERVER_DOMAIN + "/api/achievements/getGlobalAchievements",
                 {
                     appid: props.game.appid,
                     headers: {"Content-Type": "application/json"}
@@ -73,7 +73,7 @@ function AchievementList(props: AchievementListProps) {
     const postGeneralAchievementData = async () : Promise<Achievement[]>  => {
         try {
             const response: AxiosResponse<Achievement[]> = await axios.post(
-                "http://localhost:3000/api/achievements/getGeneralAchievements",
+                import.meta.env.VITE_SERVER_DOMAIN + "/api/achievements/getGeneralAchievements",
                 {
                     appid: props.game.appid,
                     headers: {"Content-Type": "application/json"}
