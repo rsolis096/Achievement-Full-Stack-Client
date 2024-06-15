@@ -28,18 +28,20 @@ function AchievementList(props: AchievementListProps) {
     TotalAchievement[]
     >([]);
 
+
     const [loading, setLoading] = useState(true);
 
     //Make a post request to the server to get user achievement info
     const postUserAchievementData = async () : Promise<TotalAchievement[]>  => {
         try{
             const response: AxiosResponse<TotalAchievement[]> = await axios.post(
-                "http://localhost:3000/api/achievements/getAchievements",
+                "https://api.completiontracker.com/api/achievements/getAchievements",
                 {
                     appid: props.appid,
                     headers: {
                         "Content-Type": "application/json",
-                    }
+                    },
+                    withCredentials : true
                 }
             );
             setTotalData(response.data)
@@ -54,12 +56,13 @@ function AchievementList(props: AchievementListProps) {
     const postGlobalAchievementData = async () : Promise<GlobalAchievement[]>  => {
         try {
             const response: AxiosResponse<GlobalAchievement[]> = await axios.post(
-                "http://localhost:3000/api/achievements/getGlobalAchievements",
+                "https://api.completiontracker.com/api/achievements/getGlobalAchievements",
                 {
                     appid: props.appid,
                     headers: {
                         "Content-Type": "application/json"
-                    }
+                    },
+                    withCredentials : true
                 }
             );
             //setGlobalAchievementData(response.data)
@@ -76,24 +79,26 @@ function AchievementList(props: AchievementListProps) {
             //fetch user and global achievement data
             const userAchievements: TotalAchievement[] = await postUserAchievementData();
             const globalAchievements: GlobalAchievement[] = await postGlobalAchievementData();
-
+            console.log("User Achievements: ", userAchievements)
+            console.log("GLobal Achievements: ", globalAchievements)
             //Set loading to false once everything has been fetched and set
             setLoading(false);
 
             // Combine data after both fetches are complete
             if (userAchievements.length > 0 && globalAchievements.length > 0) {
+                console.log("Combining Achievements")
                 const combinedData: TotalAchievement[] = userAchievements.map((userAchievement) => {
                     const globalAchievement = globalAchievements.find(
-                        (ga) => ga.name === userAchievement.apiname
+                        (ga) => (ga.name == userAchievement.apiname)
                     );
 
                     return {
                         ...userAchievement,
                         globaldata: globalAchievement,
-                        achievementinfo: props.items.find(item => item.name === userAchievement.apiname)
+                        achievementinfo: props.game.achievements.find(item => item.name == userAchievement.apiname)
                     };
                 });
-
+                console.log("Done Combining Achievements")
                 setTotalData(combinedData);
             }
         };

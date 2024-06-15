@@ -25,38 +25,23 @@ function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false); // null indicates loading state
     const [userData, setUserData] = useState(null);
 
-    //Helper function used to get user info from server
-    const fetchUserData = async () => {
-        try {
-            console.log("Fetching user data!")
-            const response = await axios.get('http://localhost:3000/auth/steam/user',{
-                withCredentials: true,
-            });
-
-            setUserData(response.data);
-            console.log(response.data)
-        } catch (error) {
-            console.error('Error fetching user data:', error);
-        }
-    };
 
     //Checks If user is logged in upon page load
     useEffect(() => {
         const checkAuthentication = async () => {
             try {
-
-                const response = await axios.get('http://localhost:3000/auth/steam/checkAuthenticated', {
+                console.log("Page loaded, checking server for authentication")
+                const response = await axios.get('https://api.completiontracker.com/auth/steam/checkAuthenticated', {
                     withCredentials: true, // Important to include credentials
                 });
-
-                if (!response.data.authenticated) {
-                    //window.location.href = 'http://localhost:3000/auth/steam/login'; // Redirect to backend route for Steam login
-                    setIsAuthenticated(false);
-                    console.log("First Load Failure: ", userData)
-                } else {
+                if (response.data.authenticated) {
+                    console.log("Authenticated successfully.");
                     setIsAuthenticated(true);
-                    await fetchUserData();
-                    console.log("First Load  success: ", userData)
+                    setUserData(response.data.user);
+                    console.log(userData)
+                } else {
+                    console.log("Authentication Failed")
+                    setIsAuthenticated(false);
                 }
             } catch (error) {
                 console.error('Error checking authentication:', error);
@@ -64,13 +49,6 @@ function App() {
             }
         };
         checkAuthentication();
-        /*
-        //Delay 3 seconds to give the user time to read redirect message
-        const delayCheck = setTimeout(() => {
-        }, 3000);
-        // Cleanup the timeout if the component is unmounted
-        return () => clearTimeout(delayCheck);
-        */
     }, []);
 
     //Component Handlers
@@ -91,32 +69,16 @@ function App() {
     };
 
     //Handle when the user hits login button
-    const handleLogin = async () => {
-
-        const checkAuthentication = async () => {
-            try {
-                if (!isAuthenticated) {
-                    window.location.href = 'http://localhost:3000/auth/steam/login'; // Redirect to backend route for Steam login
-
-                    //This forces a return back to the main page, calling useEffect
-                    await axios.get('http://localhost:3000/auth/steam/checkAuthenticated', {
-                        withCredentials: true, // Important to include credentials
-                    });
-
-                }
-            } catch (error) {
-                console.error('Error checking authentication:', error);
-                setIsAuthenticated(false);
-            }
-        };
-        checkAuthentication()
+    const handleLogin = () => {
+        // Redirect to backend route for Steam login
+        window.location.href = 'https://api.completiontracker.com/auth/steam/login';
     }
 
     //handle when the user hits the logout button
     const handleLogout = async () => {
-        window.location.href = 'http://localhost:3000/auth/steam/logout';
+        window.location.href = 'https://api.completiontracker.com/auth/steam/logout';
 
-        const response = await axios.get('http://localhost:3000/auth/steam/checkAuthenticated/', {
+        const response = await axios.get('https://api.completiontracker.com/auth/steam/checkAuthenticated/', {
             withCredentials: true, // Important to include credentials
         });
 
