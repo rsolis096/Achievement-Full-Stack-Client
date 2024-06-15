@@ -37,7 +37,7 @@ function GamesList(props : GamesListProps): JSX.Element {
         const fetchData = async () => {
             try {
                 const response: AxiosResponse<Game[]> = await axios.post(
-                    process.env.SERVER_DOMAIN+"/api/games/getUserLibrary",{
+                    import.meta.env.VITE_SERVER_DOMAIN +"/api/games/getUserLibrary",{
                         count: gameCount,
 
                     },
@@ -60,7 +60,7 @@ function GamesList(props : GamesListProps): JSX.Element {
     const fetchData = async () => {
         try {
             const response: AxiosResponse<Game[]> = await axios.post(
-                'http://localhost:3000/api/games/getGames/search',
+                import.meta.env.VITE_SERVER_DOMAIN+'/api/games/getGames/search',
                 {
                     withCredentials: true,
                     lookup: gameSearch,
