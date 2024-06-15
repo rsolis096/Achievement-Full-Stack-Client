@@ -73,14 +73,14 @@ function App() {
     //Handle when the user hits login button
     const handleLogin = () => {
         // Redirect to backend route for Steam login
-        window.location.href = 'http://localhost:3000/auth/steam/login';
+        window.location.href = process.env.SERVER_DOMAIN+'/auth/steam/login';
     }
 
     //handle when the user hits the logout button
     const handleLogout = async () => {
-        window.location.href = 'http://localhost:3000/auth/steam/logout';
+        window.location.href = process.env.SERVER_DOMAIN+'/auth/steam/logout';
 
-        const response = await axios.get('http://localhost:3000/auth/steam/checkAuthenticated/', {
+        const response = await axios.get(process.env.SERVER_DOMAIN+'/auth/steam/checkAuthenticated/', {
             withCredentials: true, // Important to include credentials
         });
 

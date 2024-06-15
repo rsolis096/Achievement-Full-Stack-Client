@@ -37,7 +37,7 @@ function GamesList(props : GamesListProps): JSX.Element {
         const fetchData = async () => {
             try {
                 const response: AxiosResponse<Game[]> = await axios.post(
-                    "http://localhost:3000/api/games/getUserLibrary",{
+                    process.env.SERVER_DOMAIN+"/api/games/getUserLibrary",{
                         count: gameCount,
 
                     },

@@ -1,5 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+
+import env from 'dotenv'
+env.config()
+
 import App from "./components/App.tsx";
 
 import "./styles/index.css";
