@@ -31,7 +31,7 @@ function App() {
         const checkAuthentication = async () => {
             try {
                 console.log("Page loaded, checking server for authentication")
-                const response = await axios.get('https://api.completiontracker.com/auth/steam/checkAuthenticated', {
+                const response = await axios.get('http://localhost:3000/auth/steam/checkAuthenticated', {
                     withCredentials: true, // Important to include credentials
                 });
                 if (response.data.authenticated) {
@@ -71,14 +71,14 @@ function App() {
     //Handle when the user hits login button
     const handleLogin = () => {
         // Redirect to backend route for Steam login
-        window.location.href = 'https://api.completiontracker.com/auth/steam/login';
+        window.location.href = 'http://localhost:3000/auth/steam/login';
     }
 
     //handle when the user hits the logout button
     const handleLogout = async () => {
-        window.location.href = 'https://api.completiontracker.com/auth/steam/logout';
+        window.location.href = 'http://localhost:3000/auth/steam/logout';
 
-        const response = await axios.get('https://api.completiontracker.com/auth/steam/checkAuthenticated/', {
+        const response = await axios.get('http://localhost:3000/auth/steam/checkAuthenticated/', {
             withCredentials: true, // Important to include credentials
         });
 

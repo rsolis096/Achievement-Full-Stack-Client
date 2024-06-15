@@ -35,7 +35,7 @@ function AchievementList(props: AchievementListProps) {
     const postUserAchievementData = async () : Promise<TotalAchievement[]>  => {
         try{
             const response: AxiosResponse<TotalAchievement[]> = await axios.post(
-                "https://api.completiontracker.com/api/achievements/getAchievements",
+                "http://localhost:3000/api/achievements/getAchievements",
                 {
                     appid: props.appid,
                     headers: {
@@ -56,7 +56,7 @@ function AchievementList(props: AchievementListProps) {
     const postGlobalAchievementData = async () : Promise<GlobalAchievement[]>  => {
         try {
             const response: AxiosResponse<GlobalAchievement[]> = await axios.post(
-                "https://api.completiontracker.com/api/achievements/getGlobalAchievements",
+                "http://localhost:3000/api/achievements/getGlobalAchievements",
                 {
                     appid: props.appid,
                     headers: {
