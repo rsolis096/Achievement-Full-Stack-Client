@@ -19,7 +19,7 @@ function TitleBar(props : TitleBarProps) {
         <AppBar className = "title-toolbar" position="static">
             <Toolbar >
             <img className = "title-image" src = {getImageURL(String(props.currentGame.appid))} alt = {'Image for appid ' + props.currentGame.appid}/>
-            <Typography className = "title-name" variant = "h5">{props.currentGame ? props.currentGame.title : "No Game Selected"}</Typography>
+            <Typography className = "title-name" variant = "h5">{props.currentGame ? props.currentGame.name : "No Game Selected"}</Typography>
             <Typography className = "title-playtime" variant="h6">Playtime: {(props.currentGame.playtime / 60).toFixed(1)} hours</Typography>
             <Typography className = "title-unlocked" variant="h6">Percentage Unlocked: </Typography> {/*Look up context or just lift it from AchievementList*/}
 

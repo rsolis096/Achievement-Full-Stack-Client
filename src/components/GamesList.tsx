@@ -1,3 +1,4 @@
+//Mounter by App.tsx
 import {
     FormControl,
     Grid,
@@ -30,7 +31,30 @@ function GamesList(props : GamesListProps): JSX.Element {
     const [gameCount, setGamesCount] = useState<number>(10)
     const [gameSearch, setGameSearch] = useState<string>("")
     const [gameSearchList, setGameSearchList] = useState<Game[]>([])
-    const [gameDisplayType, setGameDisplayType] = useState<string>("default");
+    // Debounce when gameSearch input value is changed (see custom hook)
+    const debouncedSearchTerm = useDebounce(gameSearch, 200);
+
+    //Used by useEffect hooks to fetch user game list data
+    const fetchData = async () => {
+        try {
+            const response: AxiosResponse<Game[]> = await axios.post(
+                import.meta.env.VITE_SERVER_DOMAIN+'/api/games/getGames/search',{
+                    lookup: gameSearch,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                },
+                {
+                    withCredentials: true,
+                }
+            );
+            console.log(response.data);
+            //YOU MUST DO SOMETHING WITH THE RESPONSE
+            setGameSearchList(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
 
     //Fetch the game data from the server (API or Database determined by server)
     useEffect(() => {
@@ -39,7 +63,6 @@ function GamesList(props : GamesListProps): JSX.Element {
                 const response: AxiosResponse<Game[]> = await axios.post(
                     import.meta.env.VITE_SERVER_DOMAIN +"/api/games/getUserLibrary",{
                         count: gameCount,
-
                     },
                     {
                         withCredentials: true,
@@ -48,6 +71,7 @@ function GamesList(props : GamesListProps): JSX.Element {
                         },
                     }
                 );
+                console.log(response.data);
                 setUserLibraryState(response.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -56,37 +80,12 @@ function GamesList(props : GamesListProps): JSX.Element {
         fetchData();
     }, [gameCount]);
 
-    //SEARCH FUNCTIONALITY Used by useEffect hook to fetch user data
-    const fetchData = async () => {
-        try {
-            const response: AxiosResponse<Game[]> = await axios.post(
-                import.meta.env.VITE_SERVER_DOMAIN+'/api/games/getGames/search',
-                {
-                    withCredentials: true,
-                    lookup: gameSearch,
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
-                }
-            );
-            //YOU MUST DO SOMETHING WITH THE RESPONSE
-            setGameSearchList(response.data);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };
-
-    // Debounce when gameSearch input value is changed (see custom hook)
-    const debouncedSearchTerm = useDebounce(gameSearch, 200);
-
-    //Post request for game lookup
+    //Fetch the game data from the server with search restrictions
     useEffect(() => {
         if (debouncedSearchTerm) {
             fetchData();
-            setGameDisplayType("search")
         } else {
             setGameSearchList([]); // Clear the search list if the search term is empty
-            setGameDisplayType("default")
         }
     }, [debouncedSearchTerm]);
 
@@ -111,21 +110,20 @@ function GamesList(props : GamesListProps): JSX.Element {
 
     //Iterate over default order of user library, display it on games list
     const gameItemsDefault  = userLibraryState.filter((item) =>{
-        if(item.has_community_visible_stats){
-            return item;
+        if(gameSearchList.length == 0) {
+            if(item.has_community_visible_stats){
+                return item;
+            }
+        }else{
+            //Match Search Requests with userLibrary
+            return item.has_community_visible_stats && gameSearchList.some(i => i.name == item.name)
         }
     }).map((item) => (
-            <ListItemButton key={item.appid} onClick={() => handleGameClick(item)}>
-                <GameItem key={item.appid} game={item}/>
-            </ListItemButton>
-    ));
-
-    //Iterate over search results, display it on games list
-    const gameItemsSearch  = gameSearchList.map((item) => (
         <ListItemButton key={item.appid} onClick={() => handleGameClick(item)}>
             <GameItem key={item.appid} game={item}/>
         </ListItemButton>
     ));
+
 
     return (
         <Grid item xs={12} sm={4} md={3} >
@@ -149,19 +147,18 @@ function GamesList(props : GamesListProps): JSX.Element {
                 </FormControl>
 
                 {/*Game List (differentiate between search results and default results*/}
-                <List>{gameDisplayType == "default" ? gameItemsDefault : gameItemsSearch}</List>
+                <List>{gameItemsDefault}</List>
 
-                {/*Expand List Button*/}
-                {gameDisplayType == "default" &&
-                    <IconButton
-                        className = "expand-game-list-button"
-                        style = {{color: "white"}}
-                        size = "large"
-                        onClick = {handleExpandButton}
-                    >
-                        <AddCircleOutlineIcon />
-                    </IconButton>
-                }
+                {/*Expand List Button (Doesn't do anything atm)*/}
+                <IconButton
+                    className = "expand-game-list-button"
+                    style = {{color: "white"}}
+                    size = "large"
+                    onClick = {handleExpandButton}
+                >
+                    <AddCircleOutlineIcon />
+                </IconButton>
+
 
             </Paper>
 

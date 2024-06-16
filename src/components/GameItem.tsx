@@ -1,8 +1,9 @@
+//Mounted by GamesList
 import { Game } from "../interfaces/types";
-
 import {ListItem, ListItemButton, ListItemText} from "@mui/material";
-
 import "../styles/GameItem.css";
+
+
 
 interface GameItemProps {
   game: Game;
@@ -27,7 +28,7 @@ function GameItem(props: GameItemProps) {
                 className="game-card-image"
                 src={getImageURL(String(props.game.appid))}
               />
-              <ListItemText className="tab-title">{props.game.title}</ListItemText>
+              <ListItemText className="tab-title">{props.game.name}</ListItemText>
           </ListItemButton>
         </ListItem>
     </>
