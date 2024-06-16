@@ -23,7 +23,7 @@ export interface GlobalAchievement {
 //global_achievements is not included on the initial call and needs to be added when the game is selected
 export interface Game {
   appid: number;
-  title: string;
+  name: string;
   playtime: number;
   has_community_visible_stats: boolean;
   global_achievements?: GlobalAchievement[];
@@ -32,5 +32,9 @@ export interface Game {
 export interface SteamUser {
   id: string;
   displayName: string;
-  photos: string[];
+  photos: Photo[];
+}
+
+export interface Photo{
+  value: string
 }

@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {
     Grid,
     Typography,
-    Box, AppBar, Toolbar, Button
+    Box, AppBar, Toolbar, Button, Avatar
 } from "@mui/material";
 
 import AchievementList from "./AchievementList.tsx";
@@ -95,6 +95,7 @@ function App() {
     }
 
     //Extract steam user data from req.user
+    //Returns object of type SteamUser
     const extractSteamUser = (user: never): SteamUser => {
         const { id, displayName, photos } = user;
         return { id, displayName, photos };
@@ -127,8 +128,30 @@ function App() {
 
           <AppBar position="static" style={{ marginBottom: '10px' }}>
               <Toolbar>
-                  <Button variant = "contained" onClick = { () => {handleLogout()} }>Logout</Button>
-                  {userData && (<Typography>Logged in as {extractSteamUser(userData).displayName}</Typography>) }
+
+                  <Grid alignItems="center" container direction = "row"  justifyContent = "flex-end">
+
+                      {userData && (
+                          <>
+                              <Grid container direction = "row" alignItems = "center" item xs>
+                                  <Grid className = "profile-picture" item xs = {0}>
+                                      <Avatar   alt="steam-pfp"   sx={{ width: 50, height: 50}} src={extractSteamUser(userData).photos[2].value} />
+                                  </Grid>
+                                  <Grid item className = "display-name" xs>
+                                    <Typography variant ="h6" >Signed in as: {extractSteamUser(userData).displayName}</Typography>
+                                  </Grid>
+                              </Grid>
+                          </>
+                      ) }
+
+                      <Grid  item>
+                        <Button  className = "logout-button" variant = "contained" onClick = { () => {handleLogout()} }>Logout</Button>
+                      </Grid>
+
+
+
+                  </Grid>
+
               </Toolbar>
           </AppBar>
 
@@ -161,7 +184,7 @@ function App() {
                       visibleItems = {visibleFilter}
                   />
               ) : (
-                  <Typography variant="body1">Select a game to see achievements.</Typography>
+                  <Typography style ={{"color" : "white"}} variant="body1">Select a game to see achievements.</Typography>
               )}
             </Box>
 
