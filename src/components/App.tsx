@@ -78,11 +78,13 @@ function App() {
 
     //handle when the user hits the logout button
     const handleLogout = async () => {
-        window.location.href = import.meta.env.VITE_SERVER_DOMAIN+'/auth/steam/logout';
 
-        const response = await axios.get(import.meta.env.VITE_SERVER_DOMAIN+'/auth/steam/checkAuthenticated/', {
-            withCredentials: true, // Important to include credentials
-        });
+        console.log("Request to logout")
+        const response = await axios.post(import.meta.env.VITE_SERVER_DOMAIN+'/auth/steam/logout',
+            {},
+            {withCredentials: true})
+
+        console.log("Response from logout server: ", response.data)
 
         if (!response.data.authenticated) {
             setIsAuthenticated(false)
