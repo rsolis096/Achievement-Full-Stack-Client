@@ -27,41 +27,20 @@ interface GamesListProps {
 
 function GamesList(props : GamesListProps): JSX.Element {
 
-    const [userLibraryState, setUserLibraryState] = useState<Game[]>([]);
+    const [userGames, setUserGames] = useState<Game[]>([]);
+    const [userGamesSearch, setUserGamesSearch] = useState<Game[]>([])
     const [gameCount, setGamesCount] = useState<number>(10)
     const [gameSearch, setGameSearch] = useState<string>("")
-    const [gameSearchList, setGameSearchList] = useState<Game[]>([])
+
     // Debounce when gameSearch input value is changed (see custom hook)
     const debouncedSearchTerm = useDebounce(gameSearch, 200);
 
-    //Used by useEffect hooks to fetch user game list data
-    const fetchData = async () => {
-        try {
-            const response: AxiosResponse<Game[]> = await axios.post(
-                import.meta.env.VITE_SERVER_DOMAIN+'/api/games/getGames/search',{
-                    lookup: gameSearch,
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
-                },
-                {
-                    withCredentials: true,
-                }
-            );
-            console.log(response.data);
-            //YOU MUST DO SOMETHING WITH THE RESPONSE
-            setGameSearchList(response.data);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };
-
-    //Fetch the game data from the server (API or Database determined by server)
+    //Post All User Games from server
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response: AxiosResponse<Game[]> = await axios.post(
-                    import.meta.env.VITE_SERVER_DOMAIN +"/api/games/getUserLibrary",{
+                    import.meta.env.VITE_SERVER_DOMAIN +"/api/games/getUserGames",{
                         count: gameCount,
                     },
                     {
@@ -71,10 +50,12 @@ function GamesList(props : GamesListProps): JSX.Element {
                         },
                     }
                 );
-                console.log(response.data);
-                setUserLibraryState(response.data);
+                console.log("APPLE")
+                console.log(response.data)
+                setUserGames(response.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
+                setUserGames([]);
             }
         };
         fetchData();
@@ -83,9 +64,32 @@ function GamesList(props : GamesListProps): JSX.Element {
     //Fetch the game data from the server with search restrictions
     useEffect(() => {
         if (debouncedSearchTerm) {
+            const fetchData = async () => {
+                try {
+                    const response: AxiosResponse<Game[]> = await axios.post(
+                        import.meta.env.VITE_SERVER_DOMAIN+'/api/games/getUserGames/search',{
+                            lookup: gameSearch,
+                            headers: {
+                                "Content-Type": "application/json",
+                            }
+                        },
+                        {
+                            withCredentials: true,
+                        }
+                    );
+                    setUserGamesSearch(response.data);
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                    setUserGamesSearch([]);
+                }
+            };
+            if(debouncedSearchTerm == ""){
+                setUserGamesSearch([])
+            } else{
             fetchData();
+            }
         } else {
-            setGameSearchList([]); // Clear the search list if the search term is empty
+            setUserGamesSearch([]); // Clear the search list if the search term is empty
         }
     }, [debouncedSearchTerm]);
 
@@ -95,28 +99,22 @@ function GamesList(props : GamesListProps): JSX.Element {
         setGameSearch(e.target.value);
     };
 
-    //Handles when the user clock
+    //Handles when the user clicks expand button
     const handleExpandButton = () => {
         setGamesCount( (prevState) => {
             return prevState + 5
         })
     }
 
-    //What happens when an item on the game list is clicked
+    //When a game is selected, send this game back to App.tsx, it will then be used by AchievementList
     const handleGameClick = (game  : Game) => {
-        //Load up the achievements for the game
         props.setSelectedGame(game);
     };
 
-    //Iterate over default order of user library, display it on games list
-    const gameItemsDefault  = userLibraryState.filter((item) =>{
-        if(gameSearchList.length == 0) {
-            if(item.has_community_visible_stats){
-                return item;
-            }
-        }else{
-            //Match Search Requests with userLibrary
-            return item.has_community_visible_stats && gameSearchList.some(i => i.name == item.name)
+    //Render the default games list to the screen
+    const gameItemsDefault  = userGames.filter((item) =>{
+        if(item.has_community_visible_stats){
+            return item;
         }
     }).map((item) => (
         <ListItemButton key={item.appid} onClick={() => handleGameClick(item)}>
@@ -124,6 +122,12 @@ function GamesList(props : GamesListProps): JSX.Element {
         </ListItemButton>
     ));
 
+    //Render the Search result games list to the screen
+    const gameItemsSearch = userGamesSearch.map((item) => (
+        <ListItemButton key={item.appid} onClick={() => handleGameClick(item)}>
+            <GameItem key={item.appid} game={item}/>
+        </ListItemButton>
+    ));
 
     return (
         <Grid item xs={12} sm={4} md={3} >
@@ -147,9 +151,10 @@ function GamesList(props : GamesListProps): JSX.Element {
                 </FormControl>
 
                 {/*Game List (differentiate between search results and default results*/}
-                <List>{gameItemsDefault}</List>
+                <List>{userGamesSearch.length > 0 ? gameItemsSearch : gameItemsDefault}</List>
 
                 {/*Expand List Button (Doesn't do anything atm)*/}
+                {gameSearch.length == 0 ? (
                 <IconButton
                     className = "expand-game-list-button"
                     style = {{color: "white"}}
@@ -158,6 +163,7 @@ function GamesList(props : GamesListProps): JSX.Element {
                 >
                     <AddCircleOutlineIcon />
                 </IconButton>
+                    ) : <Typography style = {{"color" : "white"}}>End of Results</Typography>}
 
 
             </Paper>

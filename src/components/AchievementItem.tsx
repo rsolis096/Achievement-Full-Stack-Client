@@ -16,22 +16,22 @@ function AchievementItem(props: AchievementItemProps) {
             {/* Image Section */}
             <Grid item xs={12} sm={2} >
               <img className="ach-image"
-                  src={props.data.achieved === 1 ? props.data.achievementinfo?.icon : props.data.achievementinfo?.icongray}
-                  alt={props.data.achievementinfo?.displayName}
+                  src={props.data.achieved === 1 ? props.data.gameData?.icon : props.data.gameData?.icongray}
+                  alt={props.data.gameData?.displayName}
               />
             </Grid>
 
             {/* Body Section */}
             <Grid item xs={12} sm={6} className="achievement-description">
-              <Typography variant="h6">{props.data.achievementinfo?.displayName}</Typography>
-              <Typography variant="body1">{props.data.achievementinfo?.description}</Typography>
+              <Typography variant="h6">{props.data.gameData?.displayName}</Typography>
+              <Typography variant="body1">{props.data.gameData?.description}</Typography>
             </Grid>
 
             {/* Unlock Info Section */}
             <Grid item xs={12} sm={4} className="achievement-unlock-info">
                 <Typography variant="body2">Unlocked: {props.data.achieved === 1 ? "True" : "False"}</Typography>
                 <Typography variant="body2">Percentage: {props.data.globaldata?.percent}</Typography>
-                <Typography variant="body2">Game: {props.data.achievementinfo?.name}</Typography>
+                <Typography variant="body2">Game: {props.data.gameData?.name}</Typography>
                 <Typography variant="body2">User: {props.data.apiname}</Typography>
                 <Typography variant="body2">Global: {props.data.globaldata?.name}</Typography>
 

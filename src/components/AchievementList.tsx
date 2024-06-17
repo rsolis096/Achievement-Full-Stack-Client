@@ -1,19 +1,18 @@
-//This component describes the Achievement Pane body
-//This component handles logic on the scale of the entire list
-
 import {useEffect, useState} from "react";
 
 import AchievementItem from "./AchievementItem";
 
 import axios, {AxiosResponse} from "axios";
 
-import {Game, Achievement, GlobalAchievement, TotalAchievement,} from "../interfaces/types";
+import {Game, GameAchievement, GlobalAchievement, TotalAchievement, UserAchievement,} from "../interfaces/types";
 
 import "../styles/AchievementList.css";
 
 
 interface AchievementListProps {
+    //The current selected Game
     game: Game;
+    //Some Filter properties
     visibleItems: boolean[];
     sort: number;
 }
@@ -21,7 +20,7 @@ interface AchievementListProps {
 function AchievementList(props: AchievementListProps) {
 
     //This state variable holds all the combined achievement data
-    const [totalData, setTotalData] = useState<
+    const [totalAchievementData, setTotalAchievementData] = useState<
     TotalAchievement[]
     >([]);
 
@@ -29,10 +28,10 @@ function AchievementList(props: AchievementListProps) {
     const [loading, setLoading] = useState(true);
 
     //Make a post request to the server to get user achievement info
-    const postUserAchievementData = async () : Promise<TotalAchievement[]>  => {
+    const postUserAchievementData = async () : Promise<UserAchievement[]>  => {
         try{
             const response: AxiosResponse<TotalAchievement[]> = await axios.post(
-                import.meta.env.VITE_SERVER_DOMAIN+"/api/achievements/getAchievements",
+                import.meta.env.VITE_SERVER_DOMAIN+"/api/achievements/getUserAchievements",
                 {
                     appid: props.game.appid,
                     headers: {"Content-Type": "application/json"}
@@ -41,7 +40,6 @@ function AchievementList(props: AchievementListProps) {
                     withCredentials : true
                 }
             );
-            setTotalData(response.data)
             return response.data
         } catch(err) {
         console.log(err)
@@ -70,10 +68,10 @@ function AchievementList(props: AchievementListProps) {
     };
 
     //Gets general achievement info. Includes stuff like icons and hidden type
-    const postGeneralAchievementData = async () : Promise<Achievement[]>  => {
+    const postGameAchievementData = async () : Promise<GameAchievement[]>  => {
         try {
-            const response: AxiosResponse<Achievement[]> = await axios.post(
-                import.meta.env.VITE_SERVER_DOMAIN + "/api/achievements/getGeneralAchievements",
+            const response: AxiosResponse<GameAchievement[]> = await axios.post(
+                import.meta.env.VITE_SERVER_DOMAIN + "/api/achievements/getGameAchievements",
                 {
                     appid: props.game.appid,
                     headers: {"Content-Type": "application/json"}
@@ -92,16 +90,14 @@ function AchievementList(props: AchievementListProps) {
     useEffect(() => {
         const fetchData = async () => {
             //fetch user and global achievement data
-            const userAchievements: TotalAchievement[] = await postUserAchievementData();
+            const userAchievements: UserAchievement[] = await postUserAchievementData();
             const globalAchievements: GlobalAchievement[] = await postGlobalAchievementData();
-            const generalAchievements: Achievement[] = await postGeneralAchievementData()
-
-            console.log("General Achievements: ", generalAchievements)
+            const gameAchievements: GameAchievement[] = await postGameAchievementData()
 
             //Set loading to false once everything has been fetched and set
             setLoading(false);
 
-            // Combine data after both fetches are complete
+            // Combine data after all fetches are complete (needed to properly render
             if (userAchievements.length > 0 && globalAchievements.length > 0) {
                 const combinedData: TotalAchievement[] = userAchievements.map((userAchievement) => {
 
@@ -111,12 +107,11 @@ function AchievementList(props: AchievementListProps) {
 
                     return {
                         ...userAchievement,
-                        globaldata: globalAchievement,
-                        achievementinfo: generalAchievements.find(item => item.name == userAchievement.apiname)
+                        globalData: globalAchievement,
+                        gameData: gameAchievements.find(item => item.name == userAchievement.apiname)
                     };
                 });
-                console.log("Done Combining Achievements")
-                setTotalData(combinedData);
+                setTotalAchievementData(combinedData);
             }
 
         };
@@ -126,7 +121,7 @@ function AchievementList(props: AchievementListProps) {
 
     //Wait until totalData has been completed
     if (loading) {
-        if(!props.game.global_achievements){
+        if(!props.game.has_community_visible_stats){
             return <div style ={{"color" : "white"}}>No achievements associated with this title.</div>;
         }
         else{
@@ -135,21 +130,20 @@ function AchievementList(props: AchievementListProps) {
     }
 
 
-
     //Render achievement list
     return (
         <>
-            {totalData.length > 0 && !loading ? (
+            {totalAchievementData.length > 0 && !loading ? (
                 <div>
                     {/*Sort the Achievement Data */}
-                    {totalData
+                    {totalAchievementData
                         .sort((a, b) => {
 
                             if (props.sort == -1 || props.sort == 0){
-                                return (a.globaldata?.percent ?? 0) - (b.globaldata?.percent ?? 0)
+                                return (a.globalData?.percent ?? 0) - (b.globalData?.percent ?? 0)
                             }
                             if (props.sort == 1){
-                                return (b.globaldata?.percent ?? 0) - (a.globaldata?.percent ?? 0)
+                                return (b.globalData?.percent ?? 0) - (a.globalData?.percent ?? 0)
                             }
                             return 0;
                         })

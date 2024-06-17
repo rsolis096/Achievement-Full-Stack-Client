@@ -21,51 +21,56 @@ function App() {
     //Define state variables
     const [sortFilter, setSortFilter] = useState<number>(0)
     const [visibleFilter, setVisibleFilter] = useState<boolean[]>([false, false]);
-    const [selectedGame, setSelectedGame] = useState<Game>( );
-    const [isAuthenticated, setIsAuthenticated] = useState(false); // null indicates loading state
-    const [userData, setUserData] = useState(null);
+    const [steamUser, setSteamUser] = useState<SteamUser>({authenticated : false, id: "none", displayName: 'none', photos: []});
 
+    const [selectedGame, setSelectedGame] = useState<Game>();
+
+    //Extract steam user data from req.user
+    //Returns object of type SteamUser
+    const extractSteamUser = (user: never): SteamUser => {
+        const { authenticated, id, displayName, photos } = user;
+        return { authenticated, id, displayName, photos };
+    };
 
     //Checks If user is logged in upon page load
     useEffect(() => {
         const checkAuthentication = async () => {
             try {
-                console.log("Page loaded, checking server for authentication")
+                //Check user for authentication
                 const response = await axios.get(import.meta.env.VITE_SERVER_DOMAIN+'/auth/steam/checkAuthenticated', {
                     withCredentials: true, // Important to include credentials
                 });
-                //The User was verified successfully
+
                 if (response.data.authenticated) {
-                    console.log("Authenticated successfully.");
-                    setIsAuthenticated(true);
-                    setUserData(response.data.user);
-                    console.log("Logged in as: ", response.data.user);
+                    const extractedUser:SteamUser = extractSteamUser(response.data.user as never);
+                    extractedUser.authenticated = true;
+                    console.log("Authenticated successfully, Logged in as : ", extractedUser);
+                    setSteamUser(extractedUser);
                 } else {
                     console.log("Authentication Failed")
-                    setIsAuthenticated(false);
+                    setSteamUser({authenticated : false, id: "none", displayName: 'none', photos: []});
                 }
             } catch (error) {
                 console.error('Error checking authentication:', error);
-                setIsAuthenticated(false);
+                setSteamUser({authenticated : false, id: "none", displayName: 'none', photos: []});
             }
         };
         checkAuthentication();
     }, []);
 
-    //Component Handlers
-
-    //GamesList Handlers
+    //Used by GamesList to set which game should be rendered in the achievement list
     const updateSelectedGameState = (game : Game) =>{
         setSelectedGame(game)
     }
 
-    //FilterBar Handlers
+    //Handles sorting order filter
     const updateSortFilterState = (n : number) => {
         if(n != -1){
           setSortFilter(n);
         }
     };
 
+    //Handles checkboxes used to filter certain types of achievements
     const updateVisibleFilterState = (index : number) => {
         setVisibleFilter(prevState => prevState.map((item, idx) => idx === index ? !item : item))
     };
@@ -79,37 +84,26 @@ function App() {
     //handle when the user hits the logout button
     const handleLogout = async () => {
 
-        console.log("Request to logout")
-        const response = await axios.post(import.meta.env.VITE_SERVER_DOMAIN+'/auth/steam/logout',
-            {},
-            {withCredentials: true})
-
-        console.log("Response from logout server: ", response.data)
+        const response = await axios.post(import.meta.env.VITE_SERVER_DOMAIN+'/auth/steam/logout', {}, {withCredentials: true})
 
         if (!response.data.authenticated) {
-            setIsAuthenticated(false)
-        } else {
-            setIsAuthenticated(true)
-            console.log("Failed to Logout");
+            console.log("Logout Successful ", response.data)
+            setSteamUser({authenticated : false, id: "none", displayName: 'none', photos: []})
+        } else{
+            console.log("Logout Failed")
         }
     }
 
-    //Extract steam user data from req.user
-    //Returns object of type SteamUser
-    const extractSteamUser = (user: never): SteamUser => {
-        const { id, displayName, photos } = user;
-        return { id, displayName, photos };
-    };
+
 
     //Render different screen if not logged in
-    if (!isAuthenticated) {
+    if (!steamUser.authenticated) {
         return (
             <>
                 <Grid container spacing={0.5} >
                     <AppBar position="static" style={{ marginBottom: '10px' }}>
                         <Toolbar>
                             <Button variant = "contained" onClick = {() => {handleLogin()}}>Login</Button>
-                            <Typography>Upon returning to this page, please wait a few seconds</Typography>
                         </Toolbar>
                     </AppBar>
                 </Grid>
@@ -126,32 +120,26 @@ function App() {
       {/* Main Body Content */}
       <Grid container spacing={0.5} >
 
+          {/*Top Bar With user info and logout button*/}
           <AppBar position="static" style={{ marginBottom: '10px' }}>
               <Toolbar>
+                  <Grid alignItems="center" container direction = "row"  justifyContent = "flex-start">
 
-                  <Grid alignItems="center" container direction = "row"  justifyContent = "flex-end">
-
-                      {userData && (
+                      {steamUser.authenticated && (
                           <>
-                              <Grid container direction = "row" alignItems = "center" item xs>
                                   <Grid className = "profile-picture" item xs = {0}>
-                                      <Avatar   alt="steam-pfp"   sx={{ width: 50, height: 50}} src={extractSteamUser(userData).photos[2].value} />
+                                      <Avatar   alt="steam-pfp"   sx={{ width: 50, height: 50}} src={steamUser.photos[2].value} />
                                   </Grid>
-                                  <Grid item className = "display-name" xs>
-                                    <Typography variant ="h6" >Signed in as: {extractSteamUser(userData).displayName}</Typography>
+                                  <Grid item className = "display-name" xs = {2}>
+                                    <Typography variant ="h6" >Signed in as: {steamUser.displayName}</Typography>
                                   </Grid>
-                              </Grid>
                           </>
                       ) }
 
-                      <Grid  item>
+                      <Grid  item xs = {1}>
                         <Button  className = "logout-button" variant = "contained" onClick = { () => {handleLogout()} }>Logout</Button>
                       </Grid>
-
-
-
                   </Grid>
-
               </Toolbar>
           </AppBar>
 
@@ -174,7 +162,6 @@ function App() {
 
             {/*Achievement List Display Box*/}
             <Box >
-
               {/*Achievement List Items*/}
               {selectedGame ? (
                   <AchievementList
