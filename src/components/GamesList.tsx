@@ -14,16 +14,18 @@ import {
 import "../styles/GamesList.css"
 import SearchIcon from "@mui/icons-material/Search";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, useContext, useEffect, useState} from "react";
 import GameItem from "./GameItem.tsx";
 import {Game} from "../interfaces/types.tsx";
 import axios, {AxiosResponse} from "axios";
 import useDebounce from "../hooks/useDebounce.tsx";
+import {DemoContext} from "../context/DemoModeContext.tsx";
 
 //Passed back up to App.tsx, used to display game achievement list
 interface GamesListProps {
     setSelectedGame: (game:Game) => void
 }
+
 
 function GamesList(props : GamesListProps): JSX.Element {
 
@@ -35,23 +37,23 @@ function GamesList(props : GamesListProps): JSX.Element {
     // Debounce when gameSearch input value is changed (see custom hook)
     const debouncedSearchTerm = useDebounce(gameSearch, 200);
 
+    const demoModeOn = useContext(DemoContext);
+
     //Post All User Games from server
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response: AxiosResponse<Game[]> = await axios.post(
-                    import.meta.env.VITE_SERVER_DOMAIN +"/api/games/getUserGames",{
+                    import.meta.env.VITE_SERVER_DOMAIN +"/api/games/getUserGames?demo=" + demoModeOn,{
                         count: gameCount,
                     },
                     {
-                        withCredentials: true,
+                        withCredentials: !demoModeOn,
                         headers: {
                             "Content-Type": "application/json",
                         },
                     }
                 );
-                console.log("APPLE")
-                console.log(response.data)
                 setUserGames(response.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -59,7 +61,7 @@ function GamesList(props : GamesListProps): JSX.Element {
             }
         };
         fetchData();
-    }, [gameCount]);
+    }, [gameCount, demoModeOn]);
 
     //Fetch the game data from the server with search restrictions
     useEffect(() => {
@@ -67,14 +69,14 @@ function GamesList(props : GamesListProps): JSX.Element {
             const fetchData = async () => {
                 try {
                     const response: AxiosResponse<Game[]> = await axios.post(
-                        import.meta.env.VITE_SERVER_DOMAIN+'/api/games/getUserGames/search',{
+                        import.meta.env.VITE_SERVER_DOMAIN+'/api/games/getUserGames/search?demo=' + demoModeOn,{
                             lookup: gameSearch,
                             headers: {
                                 "Content-Type": "application/json",
                             }
                         },
                         {
-                            withCredentials: true,
+                            withCredentials: !demoModeOn,
                         }
                     );
                     setUserGamesSearch(response.data);

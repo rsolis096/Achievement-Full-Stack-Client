@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 
 import AchievementItem from "./AchievementItem";
 
@@ -7,6 +7,7 @@ import axios, {AxiosResponse} from "axios";
 import {Game, GameAchievement, GlobalAchievement, TotalAchievement, UserAchievement,} from "../interfaces/types";
 
 import "../styles/AchievementList.css";
+import {DemoContext} from "../context/DemoModeContext.tsx";
 
 
 interface AchievementListProps {
@@ -17,6 +18,7 @@ interface AchievementListProps {
     sort: number;
 }
 
+
 function AchievementList(props: AchievementListProps) {
 
     //This state variable holds all the combined achievement data
@@ -24,20 +26,21 @@ function AchievementList(props: AchievementListProps) {
     TotalAchievement[]
     >([]);
 
-
     const [loading, setLoading] = useState(true);
+
+    const demoModeOn = useContext(DemoContext);
 
     //Make a post request to the server to get user achievement info
     const postUserAchievementData = async () : Promise<UserAchievement[]>  => {
         try{
             const response: AxiosResponse<TotalAchievement[]> = await axios.post(
-                import.meta.env.VITE_SERVER_DOMAIN+"/api/achievements/getUserAchievements",
+                import.meta.env.VITE_SERVER_DOMAIN+"/api/achievements/getUserAchievements?demo="+demoModeOn,
                 {
                     appid: props.game.appid,
                     headers: {"Content-Type": "application/json"}
                 },
                 {
-                    withCredentials : true
+                    withCredentials : !demoModeOn
                 }
             );
             return response.data
@@ -51,13 +54,13 @@ function AchievementList(props: AchievementListProps) {
     const postGlobalAchievementData = async () : Promise<GlobalAchievement[]>  => {
         try {
             const response: AxiosResponse<GlobalAchievement[]> = await axios.post(
-                import.meta.env.VITE_SERVER_DOMAIN + "/api/achievements/getGlobalAchievements",
+                import.meta.env.VITE_SERVER_DOMAIN + "/api/achievements/getGlobalAchievements?demo="+demoModeOn,
                 {
                     appid: props.game.appid,
                     headers: {"Content-Type": "application/json"}
                 },
                 {
-                    withCredentials : true
+                    withCredentials : !demoModeOn
                 }
             );
             return response.data;
@@ -71,13 +74,13 @@ function AchievementList(props: AchievementListProps) {
     const postGameAchievementData = async () : Promise<GameAchievement[]>  => {
         try {
             const response: AxiosResponse<GameAchievement[]> = await axios.post(
-                import.meta.env.VITE_SERVER_DOMAIN + "/api/achievements/getGameAchievements",
+                import.meta.env.VITE_SERVER_DOMAIN + "/api/achievements/getGameAchievements?demo="+demoModeOn,
                 {
                     appid: props.game.appid,
                     headers: {"Content-Type": "application/json"}
                 },
                 {
-                    withCredentials : true
+                    withCredentials : !demoModeOn
                 }
             );
             return response.data;
@@ -128,7 +131,6 @@ function AchievementList(props: AchievementListProps) {
             return <div style ={{"color" : "white"}}>Loading...</div>;
         }
     }
-
 
     //Render achievement list
     return (

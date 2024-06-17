@@ -1,7 +1,7 @@
 export interface Game {
   appid: number;
   name: string;
-  playtime: number;
+  playtime_forever: number;
   has_community_visible_stats: boolean;
 }
 

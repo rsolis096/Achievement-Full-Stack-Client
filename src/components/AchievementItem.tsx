@@ -30,10 +30,10 @@ function AchievementItem(props: AchievementItemProps) {
             {/* Unlock Info Section */}
             <Grid item xs={12} sm={4} className="achievement-unlock-info">
                 <Typography variant="body2">Unlocked: {props.data.achieved === 1 ? "True" : "False"}</Typography>
-                <Typography variant="body2">Percentage: {props.data.globaldata?.percent}</Typography>
+                <Typography variant="body2">Percentage: {props.data.globalData?.percent}</Typography>
                 <Typography variant="body2">Game: {props.data.gameData?.name}</Typography>
                 <Typography variant="body2">User: {props.data.apiname}</Typography>
-                <Typography variant="body2">Global: {props.data.globaldata?.name}</Typography>
+                <Typography variant="body2">Global: {props.data.globalData?.name}</Typography>
 
             </Grid>
       </Paper>
