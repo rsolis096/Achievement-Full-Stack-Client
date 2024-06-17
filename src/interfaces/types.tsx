@@ -1,9 +1,28 @@
-export interface Achievement {
+export interface Game {
+  appid: number;
   name: string;
+  playtime_forever: number;
+  has_community_visible_stats: boolean;
+}
+
+export interface GlobalAchievement{
+  name : string;
+  percent: number;
+}
+
+export interface GameAchievement {
+  name: string;
+  displayName: string;
+  hidden: number
+  description: string;
   icon: string;
   icongray: string;
-  description: string;
-  displayName: string;
+}
+
+export interface UserAchievement {
+  apiname: string;
+  achieved: number;
+  unlocktime: number;
 }
 
 export interface TotalAchievement {
@@ -11,25 +30,13 @@ export interface TotalAchievement {
   achieved: number;
   unlocktime: number;
 
-  globaldata?: GlobalAchievement
-  achievementinfo? : Achievement
+  globalData?: GlobalAchievement
+  gameData? : GameAchievement
 }
 
-export interface GlobalAchievement {
-  name: string;
-  percent: number;
-}
-
-//global_achievements is not included on the initial call and needs to be added when the game is selected
-export interface Game {
-  appid: number;
-  name: string;
-  playtime: number;
-  has_community_visible_stats: boolean;
-  global_achievements?: GlobalAchievement[];
-}
 
 export interface SteamUser {
+  authenticated: boolean,
   id: string;
   displayName: string;
   photos: Photo[];

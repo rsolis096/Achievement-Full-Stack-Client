@@ -1,13 +1,15 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {
     Grid,
     Typography,
-    Box, AppBar, Toolbar, Button, Avatar
+    Box, AppBar, Toolbar, Button, Avatar, Switch, FormGroup, FormControlLabel
 } from "@mui/material";
 
-import AchievementList from "./AchievementList.tsx";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
+import AchievementList from "./AchievementList.tsx";
+import {DemoContext} from "../context/DemoModeContext.tsx"
 import "../styles/App.css";
 
 import FilterBar from "./FilterBar.tsx";
@@ -16,56 +18,63 @@ import {Game, SteamUser} from "../interfaces/types.tsx";
 import TitleBar from "./TitleBar.tsx";
 import axios from "axios";
 
+
 function App() {
 
     //Define state variables
     const [sortFilter, setSortFilter] = useState<number>(0)
     const [visibleFilter, setVisibleFilter] = useState<boolean[]>([false, false]);
-    const [selectedGame, setSelectedGame] = useState<Game>( );
-    const [isAuthenticated, setIsAuthenticated] = useState(false); // null indicates loading state
-    const [userData, setUserData] = useState(null);
+    const [steamUser, setSteamUser] = useState<SteamUser>({authenticated : false, id: "none", displayName: 'none', photos: []});
+    const [demoModeOn, setDemoModeOn] = useState<boolean>(false);
+    const [selectedGame, setSelectedGame] = useState<Game>();
 
+    //Extract steam user data from req.user
+    //Returns object of type SteamUser
+    const extractSteamUser = (user: never): SteamUser => {
+        const { authenticated, id, displayName, photos } = user;
+        return { authenticated, id, displayName, photos };
+    };
 
     //Checks If user is logged in upon page load
     useEffect(() => {
         const checkAuthentication = async () => {
             try {
-                console.log("Page loaded, checking server for authentication")
+                //Check user for authentication
                 const response = await axios.get(import.meta.env.VITE_SERVER_DOMAIN+'/auth/steam/checkAuthenticated', {
                     withCredentials: true, // Important to include credentials
                 });
-                //The User was verified successfully
+
                 if (response.data.authenticated) {
-                    console.log("Authenticated successfully.");
-                    setIsAuthenticated(true);
-                    setUserData(response.data.user);
-                    console.log("Logged in as: ", response.data.user);
+                    const extractedUser:SteamUser = extractSteamUser(response.data.user as never);
+                    extractedUser.authenticated = true;
+                    console.log("Authenticated successfully, Logged in as : ", extractedUser);
+                    setDemoModeOn(false);
+                    setSteamUser(extractedUser);
                 } else {
                     console.log("Authentication Failed")
-                    setIsAuthenticated(false);
+                    setSteamUser({authenticated : false, id: "none", displayName: 'none', photos: []});
                 }
             } catch (error) {
                 console.error('Error checking authentication:', error);
-                setIsAuthenticated(false);
+                setSteamUser({authenticated : false, id: "none", displayName: 'none', photos: []});
             }
         };
         checkAuthentication();
     }, []);
 
-    //Component Handlers
-
-    //GamesList Handlers
+    //Used by GamesList to set which game should be rendered in the achievement list
     const updateSelectedGameState = (game : Game) =>{
         setSelectedGame(game)
     }
 
-    //FilterBar Handlers
+    //Handles sorting order filter
     const updateSortFilterState = (n : number) => {
         if(n != -1){
           setSortFilter(n);
         }
     };
 
+    //Handles checkboxes used to filter certain types of achievements
     const updateVisibleFilterState = (index : number) => {
         setVisibleFilter(prevState => prevState.map((item, idx) => idx === index ? !item : item))
     };
@@ -79,119 +88,151 @@ function App() {
     //handle when the user hits the logout button
     const handleLogout = async () => {
 
-        console.log("Request to logout")
-        const response = await axios.post(import.meta.env.VITE_SERVER_DOMAIN+'/auth/steam/logout',
-            {},
-            {withCredentials: true})
-
-        console.log("Response from logout server: ", response.data)
+        const response = await axios.post(import.meta.env.VITE_SERVER_DOMAIN+'/auth/steam/logout', {}, {withCredentials: true})
 
         if (!response.data.authenticated) {
-            setIsAuthenticated(false)
-        } else {
-            setIsAuthenticated(true)
-            console.log("Failed to Logout");
+            console.log("Logout Successful ")
+            setSteamUser({authenticated : false, id: "none", displayName: 'none', photos: []})
+        } else{
+            console.log("Logout Failed")
         }
     }
 
-    //Extract steam user data from req.user
-    //Returns object of type SteamUser
-    const extractSteamUser = (user: never): SteamUser => {
-        const { id, displayName, photos } = user;
-        return { id, displayName, photos };
-    };
+    const handleDemoToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setDemoModeOn(event.target.checked);
+    }
 
     //Render different screen if not logged in
-    if (!isAuthenticated) {
+    if (!steamUser.authenticated && !demoModeOn) {
         return (
             <>
-                <Grid container spacing={0.5} >
+                <DemoContext.Provider value={demoModeOn}>
+
                     <AppBar position="static" style={{ marginBottom: '10px' }}>
                         <Toolbar>
-                            <Button variant = "contained" onClick = {() => {handleLogin()}}>Login</Button>
-                            <Typography>Upon returning to this page, please wait a few seconds</Typography>
+                            <Grid alignItems="center" container direction = "row">
+
+                                <Grid alignItems="center" item container xs = {6} justifyContent="flex-start">
+                                        <Grid item xs = {8.5}>
+                                            <Button variant = "contained" onClick = {() => {handleLogin()}}>Login with Steam</Button>
+                                        </Grid>
+                                </Grid>
+
+                                <Grid alignItems="center" container xs = {6} item justifyContent="flex-end">
+                                    <Grid alignItems="center" item xs ={0}>
+                                    </Grid>
+
+                                    <Grid alignItems="center" item xs ={0}>
+                                        <FormGroup>
+                                            <FormControlLabel  control={<Switch checked = {demoModeOn} onChange={handleDemoToggle} color="secondary"/>}  label="Turn on Demo Mode" />
+                                        </FormGroup>
+                                    </Grid>
+                                </Grid>
+
+                            </Grid>
                         </Toolbar>
                     </AppBar>
-                </Grid>
+
+                </DemoContext.Provider>
             </>
         )
     }
 
-
-  /* Helper Functions */
-
+    //Main Logged in screen
   return (
     <>
+        <DemoContext.Provider value = {demoModeOn}>
+            {/* Main Body Content */}
+          <Grid container>
 
-      {/* Main Body Content */}
-      <Grid container spacing={0.5} >
+              {/*Top Bar With user info and logout button*/}
+              <AppBar position="static" style={{ marginBottom: '10px' }}>
+                  <Toolbar>
+                      <Grid alignItems="center" container direction = "row">
 
-          <AppBar position="static" style={{ marginBottom: '10px' }}>
-              <Toolbar>
+                          <Grid alignItems="center" item container xs = {6} justifyContent="flex-start">
 
-                  <Grid alignItems="center" container direction = "row"  justifyContent = "flex-end">
+                              <Grid alignItems="center" item container justifyContent="flex-start">
 
-                      {userData && (
-                          <>
-                              <Grid container direction = "row" alignItems = "center" item xs>
+                                  {!demoModeOn &&(
+                                      <Grid  item xs = {2}>
+                                          <Button  className = "logout-button" variant = "contained" onClick = { () => {handleLogout()} }>Logout</Button>
+                                      </Grid>
+                                  )}
+
                                   <Grid className = "profile-picture" item xs = {0}>
-                                      <Avatar   alt="steam-pfp"   sx={{ width: 50, height: 50}} src={extractSteamUser(userData).photos[2].value} />
+                                      {demoModeOn ? (
+                                      <Avatar>
+                                          <AccountCircleIcon/>
+                                      </Avatar>
+                                      ) :
+                                      (
+                                        <Avatar   alt="steam-pfp"   sx={{ width: 50, height: 50}} src={steamUser.photos[2].value} />
+                                      )}
                                   </Grid>
-                                  <Grid item className = "display-name" xs>
-                                    <Typography variant ="h6" >Signed in as: {extractSteamUser(userData).displayName}</Typography>
+
+                                  <Grid item className = "display-name" xs = {6}>
+                                      <Typography variant ="h6" >Signed in as: {demoModeOn ? "rsolis096 (DEMO)": steamUser.displayName}</Typography>
                                   </Grid>
                               </Grid>
-                          </>
-                      ) }
 
-                      <Grid  item>
-                        <Button  className = "logout-button" variant = "contained" onClick = { () => {handleLogout()} }>Logout</Button>
+
+
+
+
+                          </Grid>
+
+                          <Grid alignItems="center" container xs = {6} item justifyContent="flex-end">
+                              {(!steamUser.authenticated && demoModeOn) && (
+                                  <Grid alignItems="center" item xs ={0}>
+                                      <FormGroup>
+                                          <FormControlLabel  control={<Switch checked = {demoModeOn} onChange={handleDemoToggle} color="secondary"/>}  label="Turn Off Demo Mode" />
+                                      </FormGroup>
+                                  </Grid>
+                              )}
+                          </Grid>
+
+
                       </Grid>
+                  </Toolbar>
+              </AppBar>
 
-
-
-                  </Grid>
-
-              </Toolbar>
-          </AppBar>
-
-        {/*Games Bar*/}
-        <GamesList
-            setSelectedGame= {updateSelectedGameState}
-        />
-
-        {/*Achievements*/}
-        <Grid item xs={12} sm={8} md={9} className="achievement-list-container" >
-
-            {/*Game Title*/}
-            {selectedGame && (<TitleBar currentGame = {selectedGame}/>)}
-
-            {/*Achievement List Filter Bar*/}
-            <FilterBar
-                setSortFilterP={updateSortFilterState}
-                setVisibleFilterP= {updateVisibleFilterState}
+            {/*Games Bar (Left Hand Side) */}
+            <GamesList
+                setSelectedGame= {updateSelectedGameState}
             />
 
-            {/*Achievement List Display Box*/}
-            <Box >
+            {/*Achievements*/}
+            <Grid item xs={12} sm={8} md={9} className="achievement-list-container" >
 
-              {/*Achievement List Items*/}
-              {selectedGame ? (
-                  <AchievementList
-                      key={selectedGame.appid}
-                      game={selectedGame}
-                      sort = {sortFilter}
-                      visibleItems = {visibleFilter}
-                  />
-              ) : (
-                  <Typography style ={{"color" : "white"}} variant="body1">Select a game to see achievements.</Typography>
-              )}
-            </Box>
+                {/*Game Title*/}
+                {selectedGame && (<TitleBar currentGame = {selectedGame}/>)}
 
-        </Grid>
+                {/*Achievement List Filter Bar*/}
+                <FilterBar
+                    setSortFilterP={updateSortFilterState}
+                    setVisibleFilterP= {updateVisibleFilterState}
+                />
 
-      </Grid>
+                {/*Achievement List Display Box*/}
+                <Box >
+                  {/*Achievement List Items*/}
+                  {selectedGame ? (
+                      <AchievementList
+                          key={selectedGame.appid}
+                          game={selectedGame}
+                          sort = {sortFilter}
+                          visibleItems = {visibleFilter}
+                      />
+                  ) : (
+                      <Typography style ={{"color" : "white"}} variant="body1">Select a game to see achievements.</Typography>
+                  )}
+                </Box>
 
+            </Grid>
+
+          </Grid>
+        </DemoContext.Provider>
     </>
   );
 }
