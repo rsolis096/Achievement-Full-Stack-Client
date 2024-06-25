@@ -1,101 +1,97 @@
-//import {useEffect, useState} from "react";
+//Utility
+import { useState } from "react";
 
-import {AppBar, Box, Button, Checkbox, FormControlLabel, Menu, MenuItem} from "@mui/material";
+//Styles
+import {
+  Tabs,
+  Tab,
+  Button,
+  Dropdown,
+  DropdownTrigger,
+  DropdownItem,
+  DropdownMenu,
+} from "@nextui-org/react";
+import LockIcon from "@mui/icons-material/Lock";
 import SortIcon from "@mui/icons-material/Sort";
-import React, {useState} from "react";
-import "../styles/FilterBar.css"
-
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+//Mounted by App.tsx
 interface FilterBarProps {
-    setSortFilterP: (type : number) => void,
-    setVisibleFilterP: (index : number) => void
+  setSortFilterP: (type: string) => void;
+  setVisibleFilterP: (type: string) => void;
 }
 
-function FilterBar(props : FilterBarProps){
+function FilterBar(props: FilterBarProps) {
+  const [currentSort, setCurrentSort] = useState<string>("ltm");
 
-    const [currentSort, setCurrentSort] = useState<string>("Most to Least Rare")
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  //Handles when the user clicks on a filter checkbox
+  const handleLockView = (type: React.Key) => {
+    props.setVisibleFilterP(type as string);
+  };
 
-    /*Button Handlers*/
-    const sortOpen = Boolean(anchorEl);
+  //Handles when the user clicks on the filter drop down menu
+  const handleFilterClick = (item: React.Key) => {
+    //Local change
+    setCurrentSort(item as string);
+    //Send to achievements list
+    props.setSortFilterP(item as string);
+  };
 
-    //Handles when the user clicks on a filter checkbox
-    const handleCheckBox = (index : number) => {
-        props.setVisibleFilterP(index);
-    }
+  return (
+    <div className="flex flex-rows items-center px-3 gap-4">
+      <div>
+        <Dropdown>
+          <DropdownTrigger>
+            <Button
+              //onClick={handleFilterClick}
+              variant="solid"
+              startContent={<SortIcon />}
+            >
+              {currentSort === "ltm"
+                ? "Least to Most Rare"
+                : "Most to Least Rare"}
+            </Button>
+          </DropdownTrigger>
 
-    //Handles when the user clicks on the filter drop down menu
-    const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    //Handles when the filter dropdown menu is closed
-    const handleClose = (n : number) => {
-        //Close filter when a filter choice is selected and do stuff
-        const labels = ["Most to Least Rare", "Least To Most Rare"];
-        setAnchorEl(null)
-        if(n != -1){
-            props.setSortFilterP(n)
-            setCurrentSort(labels[n])
-        }
-    };
-
-
-    return (
-
-        <AppBar className = "achievement-filters" position="static">
-            <Box display="flex" alignItems="center">
-
-                {/*Filter Button*/}
-                <Button
-                    id="basic-button"
-                    onClick={handleFilterClick}
-                    variant="contained"
-                    startIcon = {<SortIcon />}
-                >
-                    {currentSort}
-                </Button>
-
-                {/*Sort Button Dropdown menu*/}
-                <Menu
-                    id="basic-menu"
-                    anchorEl={anchorEl}
-                    open={sortOpen}
-                    onClose={() => handleClose(-1)}
-                >
-                    <MenuItem onClick={() =>handleClose(0)}>Most to Least Rare</MenuItem>
-                    <MenuItem onClick={() =>handleClose(1)}>Least to Most Rare</MenuItem>
-                </Menu>
-
-                {/*Hide Locked Checkbox*/}
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            name="Show Locked"
-                            onChange = {() => handleCheckBox(0)}
-                            style = {{color: "white"}}
-                            sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
-                        />
-                    }
-                    label="Hide Locked"
-                    style={{ marginLeft: '10px' }} // Adjust spacing as needed
-                />
-
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            name="Show Locked"
-                            onChange = {() => handleCheckBox(1)}
-                            style = {{color: "white"}}
-                            sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
-                        />
-                    }
-                    label="Hide Unlocked"
-                    style={{ marginLeft: '10px' }} // Adjust spacing as needed
-                />
-
-            </Box>
-        </AppBar>
-    )
+          {/*Sort Button Dropdown menu*/}
+          <DropdownMenu
+            aria-label="Static Actions"
+            onAction={handleFilterClick}
+          >
+            <DropdownItem key="ltm">Least to Most Rare</DropdownItem>
+            <DropdownItem key="mtl">Most to Least Rare</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </div>
+      <div>
+        <Tabs
+          onSelectionChange={handleLockView}
+          key="bordered"
+          variant="bordered"
+          aria-label="filter-bar-tabs"
+        >
+          <Tab key="default" title="Default" />
+          <Tab
+            key="unlocked"
+            title={
+              <div className="flex items-center space-x-2">
+                <LockOpenIcon />
+                <span>Unlocked</span>
+              </div>
+            }
+          />
+          <Tab
+            key="locked"
+            title={
+              <div className="flex items-center space-x-2">
+                <LockIcon />
+                <span>Locked</span>
+              </div>
+            }
+          />
+        </Tabs>
+      </div>
+    </div>
+  );
 }
 
-export default FilterBar
+export default FilterBar;
