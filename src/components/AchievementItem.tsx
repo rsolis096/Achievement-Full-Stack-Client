@@ -1,7 +1,9 @@
+// Utility
 import { TotalAchievement, Game } from "../interfaces/types";
-import {Grid, Paper, Typography} from "@mui/material";
-import "../styles/AchievementItem.css";
 
+// Styles
+import { Card, Image, CardBody } from "@nextui-org/react";
+import "../styles/AchievementItem.css";
 
 interface AchievementItemProps {
   data: TotalAchievement;
@@ -9,34 +11,51 @@ interface AchievementItemProps {
 }
 
 function AchievementItem(props: AchievementItemProps) {
+  /*
+  //Save this for a global stats page
+  const clampedProgress = Math.min(
+    Math.max(props.data.globalData ? props.data.globalData.percent : 0, 0),
+    100
+  );
+
+  // Define the gradient background style
+  const backgroundStyle = {
+    background: `linear-gradient(to right, rgba(209, 213, 219, 0.8) ${clampedProgress}%, rgba(255, 255, 255, 0) ${clampedProgress}%)`,
+  };
+  */
+
   return (
     <>
-        {/* Entire Card */}
-        <Paper elevation={3} className="achievement-card" style={{ padding: '16px', marginBottom: '16px' }} key={props.data.apiname}>
-            {/* Image Section */}
-            <Grid item xs={12} sm={2} >
-              <img className="ach-image"
-                  src={props.data.achieved === 1 ? props.data.gameData?.icon : props.data.gameData?.icongray}
-                  alt={props.data.gameData?.displayName}
-              />
-            </Grid>
-
-            {/* Body Section */}
-            <Grid item xs={12} sm={6} className="achievement-description">
-              <Typography variant="h6">{props.data.gameData?.displayName}</Typography>
-              <Typography variant="body1">{props.data.gameData?.description}</Typography>
-            </Grid>
-
-            {/* Unlock Info Section */}
-            <Grid item xs={12} sm={4} className="achievement-unlock-info">
-                <Typography variant="body2">Unlocked: {props.data.achieved === 1 ? "True" : "False"}</Typography>
-                <Typography variant="body2">Percentage: {props.data.globalData?.percent}</Typography>
-                <Typography variant="body2">Game: {props.data.gameData?.name}</Typography>
-                <Typography variant="body2">User: {props.data.apiname}</Typography>
-                <Typography variant="body2">Global: {props.data.globalData?.name}</Typography>
-
-            </Grid>
-      </Paper>
+      <Card
+        isBlurred
+        className={
+          "border-none " +
+          (props.data.achieved === 1 ? "bg-background/80" : "bg-background/40")
+        }
+        shadow="sm"
+      >
+        <CardBody>
+          <div className="flex flex-cols-6 gap-2">
+            <Image
+              alt="Album cover"
+              className="max-w-20"
+              src={
+                props.data.achieved === 1
+                  ? props.data.gameData?.icon
+                  : props.data.gameData?.icongray
+              }
+            />
+            <div className="flex flex-col justify-start">
+              <h1 className="text-large font-medium mt-2">
+                {props.data.gameData?.displayName}
+              </h1>
+              <h3 className="font-semibold text-foreground/90">
+                {props.data.gameData?.description}
+              </h3>
+            </div>
+          </div>
+        </CardBody>
+      </Card>
     </>
   );
 }

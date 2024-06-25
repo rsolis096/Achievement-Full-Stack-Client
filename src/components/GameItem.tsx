@@ -1,9 +1,9 @@
 //Mounted by GamesList
+//Utility
 import { Game } from "../interfaces/types";
-import {ListItem, ListItemButton, ListItemText} from "@mui/material";
-import "../styles/GameItem.css";
 
-
+//Styles
+import { Card, Image, CardFooter } from "@nextui-org/react";
 
 interface GameItemProps {
   game: Game;
@@ -21,16 +21,18 @@ function getImageURL(id: string) {
 function GameItem(props: GameItemProps) {
   return (
     <>
-        <ListItem className="game-card">
-          <ListItemButton className = "game-card-button">
-              <img
-                  alt = "game image"
-                className="game-card-image"
-                src={getImageURL(String(props.game.appid))}
-              />
-              <ListItemText className="tab-title">{props.game.name}</ListItemText>
-          </ListItemButton>
-        </ListItem>
+      <Card isFooterBlurred className="w-full h-full">
+        <Image
+          removeWrapper
+          alt={props.game.name}
+          className="z-0 w-full h-full object-cover"
+          src={getImageURL(String(props.game.appid))}
+        />
+
+        <CardFooter className="justify-start bg-black/40 py-1 absolute before:rounded-xl rounded-small bottom-1 w-[calc(100%_-_10px)] ml-1 ">
+          <p className="text-small text-white">{props.game.name}</p>
+        </CardFooter>
+      </Card>
     </>
   );
 }

@@ -1,18 +1,14 @@
-.achievement-card {
-    display: flex;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    background-color: #2F3335!important;
-    color: white!important;
-    padding: 10px!important;
+.card-horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
-.achievement-card:hover{
-    background-color: #a7acb1!important;
-    transform: scale(1.02);
+.card-horizontal .card-image {
+  flex: 1;
 }
 
-/* Achievement icon */
-.ach-image {
-    width: 50%;
-    height: auto;
+.card-horizontal .card-content {
+  flex: 2;
+  padding: 1rem;
 }
