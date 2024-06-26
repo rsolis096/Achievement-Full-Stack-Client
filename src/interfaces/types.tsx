@@ -5,15 +5,15 @@ export interface Game {
   has_community_visible_stats: boolean;
 }
 
-export interface GlobalAchievement{
-  name : string;
+export interface GlobalAchievement {
+  name: string;
   percent: number;
 }
 
 export interface GameAchievement {
   name: string;
   displayName: string;
-  hidden: number
+  hidden: number;
   description: string;
   icon: string;
   icongray: string;
@@ -30,18 +30,27 @@ export interface TotalAchievement {
   achieved: number;
   unlocktime: number;
 
-  globalData?: GlobalAchievement
-  gameData? : GameAchievement
+  globalData?: GlobalAchievement;
+  gameData?: GameAchievement;
 }
 
-
 export interface SteamUser {
-  authenticated: boolean,
+  authenticated: boolean;
   id: string;
   displayName: string;
   photos: Photo[];
 }
 
-export interface Photo{
-  value: string
+export interface Photo {
+  value: string;
+}
+
+export interface SteamUserContextType {
+  user: SteamUser;
+  setUser: (user: SteamUser) => void;
+}
+
+export interface DemoContextType {
+  demoModeOn: boolean;
+  setDemoMode: (value: boolean) => void;
 }

@@ -24,7 +24,7 @@ function TitleBar(props: TitleBarProps) {
         <Image
           removeWrapper
           alt={props.game.name}
-          className="z-0 w-full h-full object-cover rounded-lg	border-2 border-white"
+          className="z-0 w-full h-full object-cover rounded-lg	border-2 border-white/20"
           src={getImageURL(String(props.game.appid))}
         />
       </div>

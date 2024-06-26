@@ -188,10 +188,9 @@ function AchievementList(props: AchievementListProps) {
             list: "overflow-auto",
           }}
           label="Achievement List"
-          aria-label="Achievment List"
+          aria-label="Achievement List"
           defaultSelectedKeys={["1"]}
-          variant="shadow"
-          color="default"
+          variant="solid"
           selectionMode="none"
         >
           {/*Sort the Achievement Data */}

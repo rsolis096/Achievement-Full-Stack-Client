@@ -103,6 +103,7 @@ function GamesList(props: GamesListProps): JSX.Element {
   //Handle changes to the search Input box
   const handleSearchBoxChange = (e: ChangeEvent<HTMLInputElement>) => {
     //Making individual calls to the server per change doesn't work well. Need to find out what's going on or take a different approach
+    console.log("current search: ", e.target.value);
     setGameSearch(e.target.value);
   };
 
@@ -120,7 +121,6 @@ function GamesList(props: GamesListProps): JSX.Element {
 
   // Handle selection change
   const handleSelectionChange = (keys: Selection) => {
-    console.log("Selection Changed");
     setSelectedKeys(keys);
   };
 
@@ -134,6 +134,9 @@ function GamesList(props: GamesListProps): JSX.Element {
     .map((item) => (
       <ListboxItem
         key={item.appid}
+        classNames={{
+          selectedIcon: "text-white",
+        }}
         textValue={item.name}
         onPress={() => handleGameClick(item)}
       >
@@ -155,23 +158,29 @@ function GamesList(props: GamesListProps): JSX.Element {
   return (
     <>
       {/*Search Bar*/}
-      <Input
-        id="input-with-icon-adornment"
-        placeholder="Search for a game in your library"
-        onChange={handleSearchBoxChange}
-        startContent={<SearchIcon sx={{ color: "grey" }} />}
-      />
+      <div style={{ color: "white" }}>
+        <Input
+          id="input-with-icon-adornment"
+          classNames={{
+            inputWrapper: "border-white/20",
+          }}
+          placeholder="Search for a game in your library"
+          variant="bordered"
+          onChange={handleSearchBoxChange}
+          isClearable={true}
+          onClear={() => setGameSearch("")}
+          startContent={<SearchIcon sx={{ color: "white" }} />}
+        />
+      </div>
       {/*Game List*/}
-      <div className="bg-foregroundColor mt-2 h-5/6 shadow-lg rounded-lg overflow-auto p-1 custom-scrollbar rounded-lg	border-gray-500	 border-2 ">
+      <div className="bg-foregroundColor/40 mt-2 h-5/6 shadow-lg rounded-lg overflow-auto p-1 custom-scrollbar border-white/20	 border-2 ">
         <Listbox
           selectedKeys={selectedKeys}
           onSelectionChange={handleSelectionChange}
-          classNames={{
-            list: "overflow-auto",
-          }}
-          defaultSelectedKeys={["1"]}
-          variant="shadow"
-          color="danger"
+          className="p-0 gap-0 divide-y   overflow-visible shadow-small rounded-medium"
+          disallowEmptySelection
+          variant="bordered"
+          color="default"
           label="Selected Game"
           selectionMode="single"
         >

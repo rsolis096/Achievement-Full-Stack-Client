@@ -1,20 +1,22 @@
 /* Custom scrollbar styles */
+
+/* -webkit-scrollbar for chrome, not needed for firefox*/
 .custom-scrollbar::-webkit-scrollbar {
-  width: 12px; /* Width of the scrollbar */
+  width: 5px; /* Width of the scrollbar */
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Background of the scrollbar track */
+  background: #ffffff00; /* Background of the scrollbar track */
   border-radius: 6px; /* Rounded corners */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #a7a6a6; /* Background of the scrollbar thumb */
+  background: #575757; /* Background of the scrollbar thumb */
   border-radius: 2px; /* Rounded corners */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Background of the scrollbar thumb on hover */
+  background: #777777; /* Background of the scrollbar thumb on hover */
 }
 
 /* Hide scrollbar if not needed */
