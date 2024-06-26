@@ -1,10 +1,8 @@
+//Utility
 import { useContext, useEffect, useState } from "react";
-
-import AchievementItem from "./AchievementItem";
-
 import axios, { AxiosResponse } from "axios";
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
 
+//Types
 import {
   Game,
   GameAchievement,
@@ -13,6 +11,12 @@ import {
   UserAchievement,
 } from "../interfaces/types";
 
+//Styling
+import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import "../styles/CustomScrollbar.css";
+
+//Components
+import AchievementItem from "./AchievementItem.tsx";
 import FilterBar from "../components/FilterBar.tsx";
 import TitleBar from "../components/TitleBar.tsx";
 import { DemoContext } from "../context/DemoModeContext.tsx";
@@ -164,75 +168,76 @@ function AchievementList(props: AchievementListProps) {
   //Render achievement list
   return (
     <>
-      {/*Game Title*/}
-      {props.game && (
-        <TitleBar
-          game={props.game}
-          achievementsSize={totalAchievementData.length}
-          achievementsEarned={
-            totalAchievementData.filter(
-              (achievement: TotalAchievement) => achievement.achieved
-            ).length
-          }
+      <div>
+        {/*Game Title*/}
+        {props.game && (
+          <TitleBar
+            game={props.game}
+            achievementsSize={totalAchievementData.length}
+            achievementsEarned={
+              totalAchievementData.filter(
+                (achievement: TotalAchievement) => achievement.achieved
+              ).length
+            }
+          />
+        )}
+        {/*Achievement List Filter Bar*/}
+        <FilterBar
+          setSortFilterP={updateSortFilterState}
+          setVisibleFilterP={updateVisibleFilterState}
         />
-      )}
-      {/*Achievement List Filter Bar*/}
-      <FilterBar
-        setSortFilterP={updateSortFilterState}
-        setVisibleFilterP={updateVisibleFilterState}
-      />
-      {/*Draw the achievement List */}
-      {totalAchievementData.length > 0 && !loading ? (
-        <Listbox
-          classNames={{
-            list: "overflow-auto",
-          }}
-          label="Achievement List"
-          aria-label="Achievement List"
-          defaultSelectedKeys={["1"]}
-          variant="solid"
-          selectionMode="none"
-        >
-          {/*Sort the Achievement Data */}
-          {totalAchievementData
-            .sort((a, b) => {
-              //Most to Least Rare
-              if (sortFilter == "mtl") {
-                return (
-                  (a.globalData?.percent ?? 0) - (b.globalData?.percent ?? 0)
-                );
-              }
-              //Least to most rare
-              else if (sortFilter == "ltm") {
-                return (
-                  (b.globalData?.percent ?? 0) - (a.globalData?.percent ?? 0)
-                );
-              }
-              return 0;
-            })
-            //hide locked achievements
-            .filter((item) => {
-              //If the item is unlocked, check if it should be returned
-              //Show Locked
-              if (visibleFilter == "default") {
-                return item.achieved == 1 || item.achieved == 0;
-              } else if (visibleFilter == "unlocked") {
-                return item.achieved == 1;
-              } else if (visibleFilter == "locked") {
-                return item.achieved == 0;
-              } else {
-                return item.achieved == 1 || item.achieved == 0;
-              }
-            })
-            .map((a) => (
-              <ListboxItem key={a.apiname} textValue={a.apiname}>
-                <AchievementItem key={a.apiname} data={a} game={props.game} />
-              </ListboxItem>
-            ))}
-        </Listbox>
-      ) : (
-        <div>No user achievements found.</div>
-      )}
+      </div>
+      <div className="overflow-auto custom-scrollbar h-5/6 mt-2">
+        {/*Draw the achievement List */}
+        {totalAchievementData.length > 0 && !loading ? (
+          <Listbox
+            label="Achievement List"
+            aria-label="Achievement List"
+            defaultSelectedKeys={["1"]}
+            variant="solid"
+            selectionMode="none"
+          >
+            {/*Sort the Achievement Data */}
+            {totalAchievementData
+              .sort((a, b) => {
+                //Most to Least Rare
+                if (sortFilter == "mtl") {
+                  return (
+                    (a.globalData?.percent ?? 0) - (b.globalData?.percent ?? 0)
+                  );
+                }
+                //Least to most rare
+                else if (sortFilter == "ltm") {
+                  return (
+                    (b.globalData?.percent ?? 0) - (a.globalData?.percent ?? 0)
+                  );
+                }
+                return 0;
+              })
+              //hide locked achievements
+              .filter((item) => {
+                //If the item is unlocked, check if it should be returned
+                //Show Locked
+                if (visibleFilter == "default") {
+                  return item.achieved == 1 || item.achieved == 0;
+                } else if (visibleFilter == "unlocked") {
+                  return item.achieved == 1;
+                } else if (visibleFilter == "locked") {
+                  return item.achieved == 0;
+                } else {
+                  return item.achieved == 1 || item.achieved == 0;
+                }
+              })
+              .map((a) => (
+                <ListboxItem key={a.apiname} textValue={a.apiname}>
+                  <AchievementItem key={a.apiname} data={a} game={props.game} />
+                </ListboxItem>
+              ))}
+          </Listbox>
+        ) : (
+          <div>No user achievements found.</div>
+        )}
+      </div>
     </>
   );
 }

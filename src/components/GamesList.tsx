@@ -173,7 +173,7 @@ function GamesList(props: GamesListProps): JSX.Element {
         />
       </div>
       {/*Game List*/}
-      <div className="bg-foregroundColor/40 mt-2 h-5/6 shadow-lg rounded-lg overflow-auto p-1 custom-scrollbar border-white/20	 border-2 ">
+      <div className="bg-foregroundColor/40 mt-2 h-4/6 shadow-lg rounded-lg overflow-auto p-1 custom-scrollbar border-white/20	 border-2 ">
         <Listbox
           selectedKeys={selectedKeys}
           onSelectionChange={handleSelectionChange}
@@ -192,12 +192,13 @@ function GamesList(props: GamesListProps): JSX.Element {
       {/*Expand Button*/}
       {gameSearch.length == 0 ? (
         <Button
-          className="w-full h-8 py-1"
+          className="w-full h-6 py-1 mt-1"
           isIconOnly
+          variant="bordered"
           aria-label="Expand"
           onClick={handleExpandButton}
         >
-          <ExpandMoreIcon />
+          <ExpandMoreIcon className="text-white" />
         </Button>
       ) : (
         <p style={{ color: "white" }}>End of Results</p>

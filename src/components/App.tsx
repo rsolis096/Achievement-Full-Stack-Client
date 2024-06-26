@@ -49,7 +49,7 @@ function App() {
                   </div>
 
                   {/*Achievements List Area*/}
-                  <div className="bg-foregroundColor  md:w-8/12 lg:w-9/12 xl:w-11/12 shadow-lg overflow-auto p-2 custom-scrollbar rounded-lg	border-white/20	 border-2 h-dvh">
+                  <div className="bg-foregroundColor  md:w-8/12 lg:w-9/12 xl:w-11/12 shadow-lg p-2  rounded-lg	border-white/20	 border-2 h-dvh">
                     {/*Actual Achievement List*/}
                     {selectedGame ? (
                       <AchievementList
