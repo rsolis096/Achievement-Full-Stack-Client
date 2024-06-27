@@ -1,23 +1,23 @@
 //Utility
-import { useState } from "react";
-import { Game, SteamUser } from "../interfaces/types.tsx";
+import { useEffect, useState } from "react";
+import { SteamUser } from "../interfaces/types.tsx";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 //Styling
 
 import "../styles/CustomScrollbar.css";
 
 //Components
-import AchievementList from "./AchievementList.tsx";
 import { DemoContext } from "../context/DemoModeContext.tsx";
 import { SteamUserContext } from "../context/SteamUserContext.tsx";
-import GamesList from "./GamesList.tsx";
 import UpperNavBar from "./UpperNavBar.tsx";
+import Library from "./Library.tsx";
 
 function App() {
   //Define state variables
 
-  const [selectedGame, setSelectedGame] = useState<Game>();
   const [demoModeOn, setDemoMode] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const [user, setUser] = useState<SteamUser>({
     authenticated: false,
@@ -26,10 +26,15 @@ function App() {
     photos: [],
   });
 
-  //Used by GamesList to set which game should be rendered in the achievement list
-  const updateSelectedGameState = (game: Game) => {
-    setSelectedGame(game);
-  };
+  useEffect(() => {
+    if (demoModeOn) {
+      navigate("/library/demo");
+    } else if (user.authenticated) {
+      navigate("/library/" + user.id);
+    } else {
+      navigate("/home");
+    }
+  }, [demoModeOn, user.authenticated, navigate]);
 
   //Main Logged in screen
   return (
@@ -39,34 +44,15 @@ function App() {
           <div className="flex flex-col bg-backgroundColor min-h-screen ">
             {/* Upper Navbar - Contains the login and demo mode code*/}
             <UpperNavBar />
-            {demoModeOn || user.authenticated ? (
-              <>
-                {/* Main Content Area */}
-                <div className="flex flex-row gap-2 w-full h-screen p-2 overflow-hidden">
-                  {/*Games Bar (Left Hand Side) */}
-                  <div className="h-full md:w-4/12 lg:w-3/12 xl:w-2/12  ">
-                    <GamesList setSelectedGame={updateSelectedGameState} />
-                  </div>
 
-                  {/*Achievements List Area*/}
-                  <div className="bg-foregroundColor  md:w-8/12 lg:w-9/12 xl:w-11/12 shadow-lg p-2  rounded-lg	border-white/20	 border-2 h-dvh">
-                    {/*Actual Achievement List*/}
-                    {selectedGame ? (
-                      <AchievementList
-                        key={selectedGame.appid}
-                        game={selectedGame}
-                      />
-                    ) : (
-                      <p style={{ color: "white" }}>
-                        Select a game to see achievements.
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <></>
-            )}
+            <Routes>
+              <Route
+                path="/home"
+                element={<p style={{ color: "white" }}>Not Signed in.</p>}
+              />
+              <Route path="/library/demo" element={<Library />} />
+              <Route path="/library/:userId" element={<Library />} />
+            </Routes>
           </div>
         </SteamUserContext.Provider>
       </DemoContext.Provider>
