@@ -27,7 +27,6 @@ function Home() {
         const response: AxiosResponse<WeeklyGame[]> = await axios.get(
           import.meta.env.VITE_SERVER_DOMAIN + "/api/games/getMostPlayedGames"
         );
-        console.log("Best:", response.data);
         setMostPlayedGames(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -38,7 +37,6 @@ function Home() {
         const response: AxiosResponse<WeeklyGame[]> = await axios.get(
           import.meta.env.VITE_SERVER_DOMAIN + "/api/games/getTopWeekly"
         );
-        console.log("Weekly:", response.data);
         setWeeklyGames(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -51,6 +49,7 @@ function Home() {
     <Card
       isFooterBlurred
       isPressable
+      key={item.appid}
       className="flex-none w-1/4"
       onPress={() => console.log("Card Pressed")}
     >
@@ -71,6 +70,7 @@ function Home() {
     <Card
       isFooterBlurred
       isPressable
+      key={item.appid}
       className="flex-none w-1/4"
       onPress={() => console.log("Card Pressed")}
     >

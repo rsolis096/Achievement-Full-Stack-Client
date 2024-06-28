@@ -36,7 +36,8 @@ function TitleBar(props: TitleBarProps) {
         </div>
         <div>
           <h1 className="text-lg" style={{ color: "white" }}>
-            Total Playtime: {props.game.playtime_forever / 60} hours
+            Total Playtime: {(props.game.playtime_forever / 60).toFixed(1)}{" "}
+            hours
           </h1>
         </div>
         <div>

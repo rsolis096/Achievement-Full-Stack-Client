@@ -36,34 +36,37 @@ function GamesList(props: GamesListProps): JSX.Element {
   // Debounce when gameSearch input value is changed (see custom hook)
   const debouncedSearchTerm = useDebounce(gameSearch, 200);
 
-  const demoModeOn = useContext(DemoContext);
-
+  const demoMode = useContext(DemoContext);
   //Post All User Games from server
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response: AxiosResponse<Game[]> = await axios.post(
-          import.meta.env.VITE_SERVER_DOMAIN +
-            "/api/games/getUserGames?demo=" +
-            demoModeOn,
+          import.meta.env.VITE_SERVER_DOMAIN + "/api/games/getUserGames",
           {
             count: gameCount,
+            demo: demoMode.demoModeOn,
           },
           {
-            withCredentials: !demoModeOn,
+            withCredentials: !demoMode.demoModeOn,
             headers: {
               "Content-Type": "application/json",
             },
           }
         );
-        setUserGames(response.data);
+
+        if (response.data.length) {
+          setUserGames(response.data);
+        } else {
+          console.log("authentication issue");
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
         setUserGames([]);
       }
     };
     fetchData();
-  }, [gameCount, demoModeOn]);
+  }, [gameCount, demoMode.demoModeOn]);
 
   //Fetch the game data from the server with search restrictions
   useEffect(() => {
@@ -72,16 +75,16 @@ function GamesList(props: GamesListProps): JSX.Element {
         try {
           const response: AxiosResponse<Game[]> = await axios.post(
             import.meta.env.VITE_SERVER_DOMAIN +
-              "/api/games/getUserGames/search?demo=" +
-              demoModeOn,
+              "/api/games/getUserGames/search?demo=",
             {
+              demo: demoMode.demoModeOn,
               lookup: gameSearch,
               headers: {
                 "Content-Type": "application/json",
               },
             },
             {
-              withCredentials: !demoModeOn,
+              withCredentials: !demoMode.demoModeOn,
             }
           );
           setUserGamesSearch(response.data);
@@ -174,19 +177,21 @@ function GamesList(props: GamesListProps): JSX.Element {
       </div>
       {/*Game List*/}
       <div className="bg-foregroundColor/40 mt-2 h-4/6 shadow-lg rounded-lg overflow-auto p-1 custom-scrollbar border-white/20	 border-2 ">
-        <Listbox
-          selectedKeys={selectedKeys}
-          onSelectionChange={handleSelectionChange}
-          className="p-0 gap-0 divide-y   overflow-visible shadow-small rounded-medium"
-          disallowEmptySelection
-          variant="bordered"
-          color="default"
-          label="Selected Game"
-          selectionMode="single"
-        >
-          {/*List Items*/}
-          {userGamesSearch.length > 0 ? gameItemsSearch : gameItemsDefault}
-        </Listbox>
+        {userGames.length > 0 && (
+          <Listbox
+            selectedKeys={selectedKeys}
+            onSelectionChange={handleSelectionChange}
+            className="p-0 gap-0 divide-y   overflow-visible shadow-small rounded-medium"
+            disallowEmptySelection
+            variant="bordered"
+            color="default"
+            label="Selected Game"
+            selectionMode="single"
+          >
+            {/*List Items*/}
+            {userGamesSearch.length > 0 ? gameItemsSearch : gameItemsDefault}
+          </Listbox>
+        )}
       </div>
 
       {/*Expand Button*/}

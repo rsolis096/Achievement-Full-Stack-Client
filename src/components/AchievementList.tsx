@@ -37,7 +37,7 @@ function AchievementList(props: AchievementListProps) {
 
   const [loading, setLoading] = useState(true);
 
-  const demoModeOn = useContext(DemoContext);
+  const demoMode = useContext(DemoContext);
 
   //Make a post request to the server to get user achievement info
   const postUserAchievementData = async (): Promise<UserAchievement[]> => {
@@ -45,13 +45,13 @@ function AchievementList(props: AchievementListProps) {
       const response: AxiosResponse<TotalAchievement[]> = await axios.post(
         import.meta.env.VITE_SERVER_DOMAIN +
           "/api/achievements/getUserAchievements?demo=" +
-          demoModeOn,
+          demoMode.demoModeOn,
         {
           appid: props.game.appid,
           headers: { "Content-Type": "application/json" },
         },
         {
-          withCredentials: !demoModeOn,
+          withCredentials: !demoMode.demoModeOn,
         }
       );
       return response.data;
@@ -67,13 +67,13 @@ function AchievementList(props: AchievementListProps) {
       const response: AxiosResponse<GlobalAchievement[]> = await axios.post(
         import.meta.env.VITE_SERVER_DOMAIN +
           "/api/achievements/getGlobalAchievements?demo=" +
-          demoModeOn,
+          demoMode.demoModeOn,
         {
           appid: props.game.appid,
           headers: { "Content-Type": "application/json" },
         },
         {
-          withCredentials: !demoModeOn,
+          withCredentials: !demoMode.demoModeOn,
         }
       );
       return response.data;
@@ -89,13 +89,13 @@ function AchievementList(props: AchievementListProps) {
       const response: AxiosResponse<GameAchievement[]> = await axios.post(
         import.meta.env.VITE_SERVER_DOMAIN +
           "/api/achievements/getGameAchievements?demo=" +
-          demoModeOn,
+          demoMode.demoModeOn,
         {
           appid: props.game.appid,
           headers: { "Content-Type": "application/json" },
         },
         {
-          withCredentials: !demoModeOn,
+          withCredentials: !demoMode.demoModeOn,
         }
       );
       return response.data;

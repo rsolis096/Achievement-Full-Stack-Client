@@ -61,6 +61,7 @@ function UpperNavBar() {
           setUser(extractedUser);
         } else {
           console.log("Authentication Failed");
+          setDemoMode(false);
           setUser({
             authenticated: false,
             id: "none",
@@ -70,6 +71,7 @@ function UpperNavBar() {
         }
       } catch (error) {
         console.error("Error checking authentication:", error);
+        setDemoMode(false);
         setUser({
           authenticated: false,
           id: "none",
