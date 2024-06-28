@@ -1,7 +1,7 @@
 //Utility
 import { useEffect, useState } from "react";
 import { SteamUser } from "../interfaces/types.tsx";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
 //Styling
 
@@ -12,6 +12,7 @@ import { DemoContext } from "../context/DemoModeContext.tsx";
 import { SteamUserContext } from "../context/SteamUserContext.tsx";
 import UpperNavBar from "./UpperNavBar.tsx";
 import Library from "./Library.tsx";
+import Home from "./Home.tsx";
 
 function App() {
   //Define state variables
@@ -46,10 +47,7 @@ function App() {
             <UpperNavBar />
 
             <Routes>
-              <Route
-                path="/home"
-                element={<p style={{ color: "white" }}>Not Signed in.</p>}
-              />
+              <Route path="/home" element={<Home />} />
               <Route path="/library/demo" element={<Library />} />
               <Route path="/library/:userId" element={<Library />} />
             </Routes>

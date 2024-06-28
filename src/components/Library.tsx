@@ -10,7 +10,7 @@ function Library() {
   const updateSelectedGameState = (game: Game) => {
     setSelectedGame(game);
   };
-  console.log("mounted");
+
   return (
     <>
       {/* Main Content Area */}
