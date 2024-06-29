@@ -13,6 +13,7 @@ import { SteamUserContext } from "../context/SteamUserContext.tsx";
 import UpperNavBar from "./UpperNavBar.tsx";
 import Library from "./Library.tsx";
 import Home from "./Home.tsx";
+import About from "./About.tsx";
 
 function App() {
   //Define state variables
@@ -47,6 +48,7 @@ function App() {
             <Routes>
               <Route path="/home" element={<Home />} />
               <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
               <Route path="/library/demo" element={<Library />} />
               <Route path="/library/:userId" element={<Library />} />
             </Routes>

@@ -3,10 +3,10 @@ function HomeDescription() {
     <>
       <h1 className="text-4xl mb-4">Welcome to Completion Tracker</h1>
       <p className="text-2xl mb-4">
-        Steam Achievement Tracker is a comprehensive tool designed to help you
-        track and manage your achievements across all your Steam games. By
-        integrating directly with the Steam API, we provide you with up-to-date
-        information about your game library and achievements.
+        Completion Tracker is a comprehensive tool designed to help you track
+        and manage your achievements across all your Steam games. By integrating
+        directly with the Steam API, we provide you with up-to-date information
+        about your game library and achievements.
       </p>
       <b className="text-xl mb-2 block">Features:</b>
       <ul className="list-disc list-inside mb-4">
