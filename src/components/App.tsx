@@ -1,7 +1,7 @@
 //Utility
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { SteamUser } from "../interfaces/types.tsx";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 //Styling
 
@@ -17,8 +17,12 @@ import Home from "./Home.tsx";
 function App() {
   //Define state variables
 
-  const [demoModeOn, setDemoMode] = useState<boolean>(false);
-  const navigate = useNavigate();
+  //const [demoModeOn, setDemoMode] = useState<boolean>(false);
+  const initialDemoMode = JSON.parse(
+    localStorage.getItem("demoModeOn") || "false"
+  );
+  const [demoModeOn, setDemoMode] = useState<boolean>(initialDemoMode);
+  //const navigate = useNavigate();
 
   const [user, setUser] = useState<SteamUser>({
     authenticated: false,
@@ -27,15 +31,10 @@ function App() {
     photos: [],
   });
 
+  // Save demo mode state to localStorage whenever it changes
   useEffect(() => {
-    if (demoModeOn) {
-      navigate("/library/demo");
-    } else if (user.authenticated) {
-      navigate("/library/" + user.id);
-    } else {
-      navigate("/home");
-    }
-  }, [demoModeOn, user.authenticated, navigate]);
+    localStorage.setItem("demoModeOn", JSON.stringify(demoModeOn));
+  }, [demoModeOn]);
 
   //Main Logged in screen
   return (
@@ -48,6 +47,7 @@ function App() {
 
             <Routes>
               <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Home />} />
               <Route path="/library/demo" element={<Library />} />
               <Route path="/library/:userId" element={<Library />} />
             </Routes>

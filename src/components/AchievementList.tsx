@@ -67,12 +67,8 @@ function AchievementList(props: AchievementListProps) {
         import.meta.env.VITE_SERVER_DOMAIN +
           "/api/achievements/getGameAchievements",
         {
-          demo: demoMode.demoModeOn,
           appid: props.game.appid,
           headers: { "Content-Type": "application/json" },
-        },
-        {
-          withCredentials: !demoMode.demoModeOn,
         }
       );
       return response.data;

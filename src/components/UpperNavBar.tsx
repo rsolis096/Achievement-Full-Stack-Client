@@ -5,11 +5,7 @@ import { DemoContext } from "../context/DemoModeContext.tsx";
 import { SteamUserContext } from "../context/SteamUserContext.tsx";
 
 //Types
-import {
-  SteamUser,
-  SteamUserContextType,
-  DemoContextType,
-} from "../interfaces/types.tsx";
+import { SteamUser, SteamUserContextType } from "../interfaces/types.tsx";
 
 //Styling
 import {
@@ -20,14 +16,18 @@ import {
   Navbar,
   NavbarContent,
   NavbarItem,
+  Link,
 } from "@nextui-org/react";
+import HomeIcon from "@mui/icons-material/Home";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
 //Props
 interface UpperNavBar {}
 
 function UpperNavBar() {
-  const { demoModeOn, setDemoMode } = useContext<DemoContextType>(DemoContext);
+  //const { demoModeOn, setDemoMode } = useContext<DemoContextType>(DemoContext);
   const { user, setUser } = useContext<SteamUserContextType>(SteamUserContext);
+  const demoMode = useContext(DemoContext);
 
   //Extract steam user data from req.user
   //Returns object of type SteamUser
@@ -57,11 +57,11 @@ function UpperNavBar() {
             "Authenticated successfully, Logged in as : ",
             extractedUser
           );
-          setDemoMode(false);
+          demoMode.setDemoMode(false);
           setUser(extractedUser);
         } else {
           console.log("Authentication Failed");
-          setDemoMode(false);
+          demoMode.setDemoMode(false);
           setUser({
             authenticated: false,
             id: "none",
@@ -71,7 +71,7 @@ function UpperNavBar() {
         }
       } catch (error) {
         console.error("Error checking authentication:", error);
-        setDemoMode(false);
+        demoMode.setDemoMode(false);
         setUser({
           authenticated: false,
           id: "none",
@@ -80,7 +80,10 @@ function UpperNavBar() {
         });
       }
     };
-    checkAuthentication();
+    console.log("upper navbar demo mode:", demoMode.demoModeOn);
+    if (!demoMode.demoModeOn) {
+      checkAuthentication();
+    }
   }, []);
 
   //Handle when the user hits login button
@@ -112,7 +115,7 @@ function UpperNavBar() {
   };
 
   const handleDemoToggle = () => {
-    setDemoMode(!demoModeOn);
+    demoMode.setDemoMode(!demoMode.demoModeOn);
   };
 
   return (
@@ -121,10 +124,10 @@ function UpperNavBar() {
       <NavbarContent justify="start">
         {/*Profile Picture*/}
         <NavbarItem>
-          {/* TODO: Wait for NextUI update, known bug causes disableAnimations error */}
+          {/* TODO: Wait for NextUI update, known bug causes disableAnimations FOR AVATAR error */}
           <Avatar
             alt="steam-pfp"
-            src={!demoModeOn ? user.photos[2]?.value : ""}
+            src={!demoMode.demoModeOn ? user.photos[2]?.value : ""}
             className="text-white"
             classNames={{
               base: "bg-white/10",
@@ -132,11 +135,11 @@ function UpperNavBar() {
           />
         </NavbarItem>
 
+        {/*Display UserName and/or login button*/}
         <NavbarItem>
-          {/*Display UserName*/}
-          {demoModeOn ? (
+          {demoMode.demoModeOn || user.authenticated ? (
             <div className="display-name text-white">
-              Signed in as: {demoModeOn ? "DEMO" : user.displayName}
+              Signed in as: {demoMode.demoModeOn ? "DEMO" : user.displayName}
             </div>
           ) : (
             <div>
@@ -155,10 +158,31 @@ function UpperNavBar() {
           )}
         </NavbarItem>
       </NavbarContent>
+      <NavbarContent justify="center" className="font-bold">
+        <NavbarItem isActive>
+          <Link underline="hover" size="lg" href="/home" aria-current="page">
+            <HomeIcon />
+            -- Home
+          </Link>
+        </NavbarItem>
+        {(user.authenticated || demoMode.demoModeOn) && (
+          <NavbarItem isActive>
+            <Link
+              underline="hover"
+              size="lg"
+              href={"/library/" + (demoMode.demoModeOn ? "demo" : user.id)}
+              aria-current="page"
+            >
+              <LibraryBooksIcon />
+              --Library
+            </Link>
+          </NavbarItem>
+        )}
+      </NavbarContent>
       <NavbarContent justify="end">
         {/*Logout Button*/}
         <NavbarItem>
-          {!demoModeOn && user.authenticated ? (
+          {!demoMode.demoModeOn && user.authenticated ? (
             <Button
               className="logout-button"
               onPress={() => {
@@ -169,7 +193,7 @@ function UpperNavBar() {
             </Button>
           ) : (
             <Switch
-              isSelected={demoModeOn}
+              isSelected={demoMode.demoModeOn}
               onValueChange={handleDemoToggle}
               classNames={{
                 label: "text-white",
