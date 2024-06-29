@@ -22,7 +22,6 @@ function App() {
     localStorage.getItem("demoModeOn") || "false"
   );
   const [demoModeOn, setDemoMode] = useState<boolean>(initialDemoMode);
-  //const navigate = useNavigate();
 
   const [user, setUser] = useState<SteamUser>({
     authenticated: false,

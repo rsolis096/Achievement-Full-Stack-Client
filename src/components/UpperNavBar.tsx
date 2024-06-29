@@ -1,5 +1,6 @@
 //Utility
 import { useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { DemoContext } from "../context/DemoModeContext.tsx";
 import { SteamUserContext } from "../context/SteamUserContext.tsx";
@@ -18,8 +19,7 @@ import {
   NavbarItem,
   Link,
 } from "@nextui-org/react";
-import HomeIcon from "@mui/icons-material/Home";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+//import HomeIcon from "@mui/icons-material/Home";
 
 //Props
 interface UpperNavBar {}
@@ -28,6 +28,7 @@ function UpperNavBar() {
   //const { demoModeOn, setDemoMode } = useContext<DemoContextType>(DemoContext);
   const { user, setUser } = useContext<SteamUserContextType>(SteamUserContext);
   const demoMode = useContext(DemoContext);
+  const navigate = useNavigate();
 
   //Extract steam user data from req.user
   //Returns object of type SteamUser
@@ -109,6 +110,7 @@ function UpperNavBar() {
         displayName: "none",
         photos: [],
       });
+      navigate("/home");
     } else {
       console.log("Logout Failed");
     }
@@ -116,6 +118,11 @@ function UpperNavBar() {
 
   const handleDemoToggle = () => {
     demoMode.setDemoMode(!demoMode.demoModeOn);
+    if (!demoMode.demoModeOn) {
+      navigate("/library/demo");
+    } else {
+      navigate("/home");
+    }
   };
 
   return (
@@ -161,8 +168,7 @@ function UpperNavBar() {
       <NavbarContent justify="center" className="font-bold">
         <NavbarItem isActive>
           <Link underline="hover" size="lg" href="/home" aria-current="page">
-            <HomeIcon />
-            -- Home
+            Home
           </Link>
         </NavbarItem>
         {(user.authenticated || demoMode.demoModeOn) && (
@@ -173,11 +179,15 @@ function UpperNavBar() {
               href={"/library/" + (demoMode.demoModeOn ? "demo" : user.id)}
               aria-current="page"
             >
-              <LibraryBooksIcon />
-              --Library
+              Library
             </Link>
           </NavbarItem>
         )}
+        <NavbarItem isActive>
+          <Link underline="hover" size="lg" href="/about" aria-current="page">
+            About
+          </Link>
+        </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
         {/*Logout Button*/}

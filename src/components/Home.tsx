@@ -5,8 +5,18 @@ import axios, { AxiosResponse } from "axios";
 //Types
 import { WeeklyGame } from "../interfaces/types";
 
+//Components
+import HomeDescription from "./HomeDescription";
+import GameView from "./GameView";
+
 //Styles
-import { Image, Card, CardFooter } from "@nextui-org/react";
+import {
+  Image,
+  Card,
+  CardFooter,
+  Listbox,
+  ListboxItem,
+} from "@nextui-org/react";
 
 const imageURL: string = "https://cdn.akamai.steamstatic.com/steam/apps/";
 const imageURLEnd: string = "/header.jpg";
@@ -46,63 +56,110 @@ function Home() {
   }, []);
 
   const drawWeeklyGames = weeklyGames.map((item: WeeklyGame) => (
-    <Card
-      isFooterBlurred
-      isPressable
-      key={item.appid}
-      className="flex-none w-1/4"
-      onPress={() => console.log("Card Pressed")}
-    >
-      <Image
-        removeWrapper
-        alt={item.name}
-        className="z-0 w-full h-full object-cover"
-        src={getImageURL(String(item.appid))}
-      />
+    <ListboxItem key={item.appid}>
+      <Card
+        isFooterBlurred
+        isPressable
+        key={item.appid}
+        onPress={() => console.log("Card Pressed")}
+      >
+        <Image
+          removeWrapper
+          alt={item.name}
+          className="z-0 w-full h-full object-cover"
+          src={getImageURL(String(item.appid))}
+        />
 
-      <CardFooter className="justify-start bg-black/40 py-1 absolute before:rounded-xl rounded-small bottom-1 w-[calc(100%_-_10px)] ml-1 ">
-        <p className="text-small text-white">{item.name}</p>
-      </CardFooter>
-    </Card>
+        <CardFooter className="justify-start bg-black/40 py-1 absolute before:rounded-xl rounded-small bottom-1 w-[calc(100%_-_10px)] ml-1 ">
+          <p className="text-small text-white">{item.name}</p>
+        </CardFooter>
+      </Card>
+    </ListboxItem>
   ));
 
   const drawTopGames = mostPlayedGames.map((item: WeeklyGame) => (
-    <Card
-      isFooterBlurred
-      isPressable
-      key={item.appid}
-      className="flex-none w-1/4"
-      onPress={() => console.log("Card Pressed")}
-    >
-      <Image
-        removeWrapper
-        alt={item.name}
-        className="z-0 w-full h-full object-cover"
-        src={getImageURL(String(item.appid))}
-      />
+    <ListboxItem key={item.appid}>
+      <Card
+        isFooterBlurred
+        isPressable
+        key={item.appid}
+        onPress={() => console.log("Card Pressed")}
+      >
+        <Image
+          removeWrapper
+          alt={item.name}
+          className="z-0 w-full h-full object-cover"
+          src={getImageURL(String(item.appid))}
+        />
 
-      <CardFooter className="justify-start bg-black/40 py-1 absolute before:rounded-xl rounded-small bottom-1 w-[calc(100%_-_10px)] ml-1 ">
-        <p className="text-small text-white">{item.name}</p>
-      </CardFooter>
-    </Card>
+        <CardFooter className="justify-start bg-black/40 py-1 absolute before:rounded-xl rounded-small bottom-1 w-[calc(100%_-_10px)] ml-1 ">
+          <p className="text-small text-white">{item.name}</p>
+        </CardFooter>
+      </Card>
+    </ListboxItem>
   ));
 
   return (
     <>
-      <p className="text-white">Popular Right Now</p>
-      <div
-        id="slider"
-        className="overflow-x-auto flex w-full gap-2 custom-scrollbar mt-1"
-      >
-        {mostPlayedGames.length > 0 && drawTopGames}
-      </div>
-
-      <p className="text-white">Top 20 Weekly</p>
-      <div
-        id="slider"
-        className="overflow-x-auto flex w-full gap-2 custom-scrollbar mt-1"
-      >
-        {weeklyGames.length > 0 && drawWeeklyGames}
+      <div className="grid grid-cols-1 gap-4 mx-auto p-2">
+        <div id="description" className="w-full text-white">
+          <HomeDescription />
+        </div>
+        <div id="game-view" className="w-full">
+          <GameView />
+        </div>
+        <div id="games">
+          <div className="flex flex-rows mt-4 w-full">
+            <div>
+              {mostPlayedGames.length > 0 ? (
+                <Listbox
+                  //selectedKeys={selectedKeys}
+                  //onSelectionChange={handleSelectionChange}
+                  topContent={
+                    <p className="text-white">
+                      Top Games by Concurrent Players
+                    </p>
+                  }
+                  className="p-0 gap-0 divide-y overflow-visible shadow-small rounded-medium w-1/2"
+                  disallowEmptySelection
+                  hideSelectedIcon
+                  variant="bordered"
+                  color="default"
+                  label="Selected Game"
+                  selectionMode="single"
+                >
+                  {/*List Items*/}
+                  {drawTopGames}
+                </Listbox>
+              ) : (
+                <p>No Top Games</p>
+              )}
+            </div>
+            <div>
+              {drawWeeklyGames.length > 0 ? (
+                <Listbox
+                  //selectedKeys={selectedKeys}
+                  //onSelectionChange={handleSelectionChange}
+                  topContent={
+                    <p className="text-white">Top Games of the Week</p>
+                  }
+                  className="p-0 gap-0 divide-y overflow-visible shadow-small rounded-medium w-1/2"
+                  disallowEmptySelection
+                  hideSelectedIcon
+                  variant="bordered"
+                  color="default"
+                  label="Selected Game"
+                  selectionMode="single"
+                >
+                  {/*List Items*/}
+                  {drawWeeklyGames}
+                </Listbox>
+              ) : (
+                <p>No Weekly Games</p>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
