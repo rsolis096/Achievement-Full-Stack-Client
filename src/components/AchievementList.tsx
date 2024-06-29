@@ -6,7 +6,6 @@ import axios, { AxiosResponse } from "axios";
 import {
   Game,
   GameAchievement,
-  GlobalAchievement,
   TotalAchievement,
   UserAchievement,
 } from "../interfaces/types";
@@ -44,9 +43,9 @@ function AchievementList(props: AchievementListProps) {
     try {
       const response: AxiosResponse<TotalAchievement[]> = await axios.post(
         import.meta.env.VITE_SERVER_DOMAIN +
-          "/api/achievements/getUserAchievements?demo=" +
-          demoMode.demoModeOn,
+          "/api/achievements/getUserAchievements",
         {
+          demo: demoMode.demoModeOn,
           appid: props.game.appid,
           headers: { "Content-Type": "application/json" },
         },
@@ -62,35 +61,13 @@ function AchievementList(props: AchievementListProps) {
   };
 
   //Make a post request to the server to get global achievement info
-  const postGlobalAchievementData = async (): Promise<GlobalAchievement[]> => {
-    try {
-      const response: AxiosResponse<GlobalAchievement[]> = await axios.post(
-        import.meta.env.VITE_SERVER_DOMAIN +
-          "/api/achievements/getGlobalAchievements?demo=" +
-          demoMode.demoModeOn,
-        {
-          appid: props.game.appid,
-          headers: { "Content-Type": "application/json" },
-        },
-        {
-          withCredentials: !demoMode.demoModeOn,
-        }
-      );
-      return response.data;
-    } catch (err) {
-      console.log(err);
-    }
-    return [];
-  };
-
-  //Gets general achievement info. Includes stuff like icons and hidden type
   const postGameAchievementData = async (): Promise<GameAchievement[]> => {
     try {
       const response: AxiosResponse<GameAchievement[]> = await axios.post(
         import.meta.env.VITE_SERVER_DOMAIN +
-          "/api/achievements/getGameAchievements?demo=" +
-          demoMode.demoModeOn,
+          "/api/achievements/getGameAchievements",
         {
+          demo: demoMode.demoModeOn,
           appid: props.game.appid,
           headers: { "Content-Type": "application/json" },
         },
@@ -110,8 +87,6 @@ function AchievementList(props: AchievementListProps) {
       //fetch user and global achievement data
       const userAchievements: UserAchievement[] =
         await postUserAchievementData();
-      const globalAchievements: GlobalAchievement[] =
-        await postGlobalAchievementData();
       const gameAchievements: GameAchievement[] =
         await postGameAchievementData();
 
@@ -119,19 +94,16 @@ function AchievementList(props: AchievementListProps) {
       setLoading(false);
 
       // Combine data after all fetches are complete (needed to properly render
-      if (userAchievements.length > 0 && globalAchievements.length > 0) {
+      if (userAchievements.length > 0 && gameAchievements.length > 0) {
         const combinedData: TotalAchievement[] = userAchievements.map(
           (userAchievement) => {
-            const globalAchievement = globalAchievements.find(
-              (ga) => ga.name == userAchievement.apiname
+            const gameAchievement = gameAchievements.find(
+              (ga) => ga.internal_name == userAchievement.apiname
             );
 
             return {
               ...userAchievement,
-              globalData: globalAchievement,
-              gameData: gameAchievements.find(
-                (item) => item.name == userAchievement.apiname
-              ),
+              gameData: gameAchievement,
             };
           }
         );
@@ -201,15 +173,17 @@ function AchievementList(props: AchievementListProps) {
             {totalAchievementData
               .sort((a, b) => {
                 //Most to Least Rare
-                if (sortFilter == "mtl") {
+                if (sortFilter == "mtl" && a.gameData && b.gameData) {
                   return (
-                    (a.globalData?.percent ?? 0) - (b.globalData?.percent ?? 0)
+                    (parseFloat(a.gameData?.player_percent_unlocked) ?? 0) -
+                    parseFloat(b.gameData?.player_percent_unlocked ?? 0)
                   );
                 }
                 //Least to most rare
-                else if (sortFilter == "ltm") {
+                else if (sortFilter == "ltm" && a.gameData && b.gameData) {
                   return (
-                    (b.globalData?.percent ?? 0) - (a.globalData?.percent ?? 0)
+                    (parseFloat(b.gameData?.player_percent_unlocked) ?? 0) -
+                    parseFloat(a.gameData?.player_percent_unlocked ?? 0)
                   );
                 }
                 return 0;

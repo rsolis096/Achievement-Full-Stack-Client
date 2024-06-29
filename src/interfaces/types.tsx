@@ -5,18 +5,14 @@ export interface Game {
   has_community_visible_stats: boolean;
 }
 
-export interface GlobalAchievement {
-  name: string;
-  percent: number;
-}
-
 export interface GameAchievement {
-  name: string;
-  displayName: string;
-  hidden: number;
-  description: string;
+  internal_name: string;
+  localized_name: string;
+  localized_desc: string;
   icon: string;
-  icongray: string;
+  icon_gray: string;
+  hidden: boolean;
+  player_percent_unlocked: string;
 }
 
 export interface UserAchievement {
@@ -30,7 +26,6 @@ export interface TotalAchievement {
   achieved: number;
   unlocktime: number;
 
-  globalData?: GlobalAchievement;
   gameData?: GameAchievement;
 }
 

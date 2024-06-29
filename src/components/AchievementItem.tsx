@@ -10,6 +10,9 @@ interface AchievementItemProps {
   game: Game;
 }
 
+const iconURL =
+  "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/"; //  +appid/icon
+
 function AchievementItem(props: AchievementItemProps) {
   /*
   //Save this for a global stats page
@@ -40,17 +43,20 @@ function AchievementItem(props: AchievementItemProps) {
               alt="Album cover"
               className="max-w-20"
               src={
-                props.data.achieved === 1
+                iconURL +
+                props.game.appid +
+                "/" +
+                (props.data.achieved === 1
                   ? props.data.gameData?.icon
-                  : props.data.gameData?.icongray
+                  : props.data.gameData?.icon_gray)
               }
             />
             <div className="flex flex-col justify-start">
               <h1 className="text-large font-medium mt-2">
-                {props.data.gameData?.displayName}
+                {props.data.gameData?.localized_name}
               </h1>
               <h3 className="font-semibold text-foreground/90">
-                {props.data.gameData?.description}
+                {props.data.gameData?.localized_desc}
               </h3>
             </div>
           </div>

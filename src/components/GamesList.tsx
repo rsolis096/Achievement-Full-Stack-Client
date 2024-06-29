@@ -58,6 +58,7 @@ function GamesList(props: GamesListProps): JSX.Element {
         if (response.data.length) {
           setUserGames(response.data);
         } else {
+          console.log(response.data);
           console.log("authentication issue");
         }
       } catch (error) {
@@ -75,7 +76,7 @@ function GamesList(props: GamesListProps): JSX.Element {
         try {
           const response: AxiosResponse<Game[]> = await axios.post(
             import.meta.env.VITE_SERVER_DOMAIN +
-              "/api/games/getUserGames/search?demo=",
+              "/api/games/getUserGames/search",
             {
               demo: demoMode.demoModeOn,
               lookup: gameSearch,
