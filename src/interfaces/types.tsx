@@ -1,8 +1,15 @@
-export interface Game {
+export interface OwnedGame {
   appid: number;
   name: string;
   playtime_forever: number;
   has_community_visible_stats: boolean;
+}
+
+export interface App {
+  appid: number;
+  name: string;
+  type: string;
+  ownerData?: OwnedGame;
 }
 
 export interface GameAchievement {
@@ -22,10 +29,7 @@ export interface UserAchievement {
 }
 
 export interface TotalAchievement {
-  apiname: string;
-  achieved: number;
-  unlocktime: number;
-
+  userData: UserAchievement;
   gameData?: GameAchievement;
 }
 

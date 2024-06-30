@@ -2,10 +2,10 @@
 
 //Utility
 import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { DemoContext } from "../context/DemoModeContext.tsx";
-import useDebounce from "../hooks/useDebounce.tsx";
+import { DemoContext } from "../../context/DemoModeContext.tsx";
+import useDebounce from "../../hooks/useDebounce.tsx";
 import axios, { AxiosResponse } from "axios";
-import { Game } from "../interfaces/types.tsx";
+import { OwnedGame } from "../../interfaces/types.tsx";
 
 //Styles
 import {
@@ -19,16 +19,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 //Components
-import GameItem from "./GameItem.tsx";
+import GameItem from "../GameItem.tsx";
 
 //Passed back up to App.tsx, used to display game achievement list
-interface GamesListProps {
-  setSelectedGame: (game: Game) => void;
+interface UserGamesListProps {
+  setSelectedGame: (game: OwnedGame) => void;
 }
 
-function GamesList(props: GamesListProps): JSX.Element {
-  const [userGames, setUserGames] = useState<Game[]>([]);
-  const [userGamesSearch, setUserGamesSearch] = useState<Game[]>([]);
+function UserGamesList(props: UserGamesListProps): JSX.Element {
+  const [userGames, setUserGames] = useState<OwnedGame[]>([]);
+  const [userGamesSearch, setUserGamesSearch] = useState<OwnedGame[]>([]);
   const [gameCount, setGamesCount] = useState<number>(10);
   const [gameSearch, setGameSearch] = useState<string>("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
@@ -41,7 +41,7 @@ function GamesList(props: GamesListProps): JSX.Element {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response: AxiosResponse<Game[]> = await axios.post(
+        const response: AxiosResponse<OwnedGame[]> = await axios.post(
           import.meta.env.VITE_SERVER_DOMAIN + "/api/games/getUserGames",
           {
             count: gameCount,
@@ -74,7 +74,7 @@ function GamesList(props: GamesListProps): JSX.Element {
     if (debouncedSearchTerm) {
       const fetchData = async () => {
         try {
-          const response: AxiosResponse<Game[]> = await axios.post(
+          const response: AxiosResponse<OwnedGame[]> = await axios.post(
             import.meta.env.VITE_SERVER_DOMAIN +
               "/api/games/getUserGames/search",
             {
@@ -119,7 +119,7 @@ function GamesList(props: GamesListProps): JSX.Element {
   };
 
   //When a game is selected, send this game back to App.tsx, it will then be used by AchievementList
-  const handleGameClick = (game: Game) => {
+  const handleGameClick = (game: OwnedGame) => {
     props.setSelectedGame(game);
   };
 
@@ -213,4 +213,4 @@ function GamesList(props: GamesListProps): JSX.Element {
   );
 }
 
-export default GamesList;
+export default UserGamesList;

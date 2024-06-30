@@ -1,19 +1,19 @@
 // Utility
-import { TotalAchievement, Game } from "../interfaces/types";
+import { TotalAchievement } from "../../interfaces/types";
 
 // Styles
 import { Card, Image, CardBody } from "@nextui-org/react";
-import "../styles/AchievementItem.css";
+import "../../styles/UserAchievementItem.css";
 
-interface AchievementItemProps {
-  data: TotalAchievement;
-  game: Game;
+interface UserAchievementItemProps {
+  achievementData: TotalAchievement;
+  appid: number;
 }
 
 const iconURL =
   "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/"; //  +appid/icon
 
-function AchievementItem(props: AchievementItemProps) {
+function UserAchievementItem(props: UserAchievementItemProps) {
   /*
   //Save this for a global stats page
   const clampedProgress = Math.min(
@@ -33,7 +33,9 @@ function AchievementItem(props: AchievementItemProps) {
         isBlurred
         className={
           "border-none " +
-          (props.data.achieved === 1 ? "bg-background/80" : "bg-background/40")
+          (props.achievementData.userData?.achieved === 1
+            ? "bg-background/80"
+            : "bg-background/40")
         }
         shadow="sm"
       >
@@ -44,19 +46,19 @@ function AchievementItem(props: AchievementItemProps) {
               className="max-w-20"
               src={
                 iconURL +
-                props.game.appid +
+                props.appid +
                 "/" +
-                (props.data.achieved === 1
-                  ? props.data.gameData?.icon
-                  : props.data.gameData?.icon_gray)
+                (props.achievementData.userData?.achieved === 1
+                  ? props.achievementData.gameData?.icon
+                  : props.achievementData.gameData?.icon_gray)
               }
             />
             <div className="flex flex-col justify-start">
               <h1 className="text-large font-medium mt-2">
-                {props.data.gameData?.localized_name}
+                {props.achievementData.gameData?.localized_name}
               </h1>
               <h3 className="font-semibold text-foreground/90">
-                {props.data.gameData?.localized_desc}
+                {props.achievementData.gameData?.localized_desc}
               </h3>
             </div>
           </div>
@@ -66,4 +68,4 @@ function AchievementItem(props: AchievementItemProps) {
   );
 }
 
-export default AchievementItem;
+export default UserAchievementItem;

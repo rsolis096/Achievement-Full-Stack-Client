@@ -4,28 +4,28 @@ import axios, { AxiosResponse } from "axios";
 
 //Types
 import {
-  Game,
+  OwnedGame,
   GameAchievement,
   TotalAchievement,
   UserAchievement,
-} from "../interfaces/types";
+} from "../../interfaces/types.tsx";
 
 //Styling
 import { Listbox, ListboxItem } from "@nextui-org/listbox";
-import "../styles/CustomScrollbar.css";
+import "../../styles/CustomScrollbar.css";
 
 //Components
-import AchievementItem from "./AchievementItem.tsx";
-import FilterBar from "../components/FilterBar.tsx";
-import TitleBar from "../components/TitleBar.tsx";
-import { DemoContext } from "../context/DemoModeContext.tsx";
+import UserAchievementItem from "./UserAchievementItem.tsx";
+import UserFilterBar from "../UserComponents/UserFilterBar.tsx";
+import TitleBar from "../TitleBar.tsx";
+import { DemoContext } from "../../context/DemoModeContext.tsx";
 
-interface AchievementListProps {
+interface UserAchievementListProps {
   //The current selected Game
-  game: Game;
+  game: OwnedGame;
 }
 
-function AchievementList(props: AchievementListProps) {
+function UserAchievementList(props: UserAchievementListProps) {
   //This state variable holds all the combined achievement data
   const [totalAchievementData, setTotalAchievementData] = useState<
     TotalAchievement[]
@@ -41,7 +41,7 @@ function AchievementList(props: AchievementListProps) {
   //Make a post request to the server to get user achievement info
   const postUserAchievementData = async (): Promise<UserAchievement[]> => {
     try {
-      const response: AxiosResponse<TotalAchievement[]> = await axios.post(
+      const response: AxiosResponse<UserAchievement[]> = await axios.post(
         import.meta.env.VITE_SERVER_DOMAIN +
           "/api/achievements/getUserAchievements",
         {
@@ -98,7 +98,7 @@ function AchievementList(props: AchievementListProps) {
             );
 
             return {
-              ...userAchievement,
+              userData: userAchievement,
               gameData: gameAchievement,
             };
           }
@@ -122,15 +122,7 @@ function AchievementList(props: AchievementListProps) {
 
   //Wait until totalData has been completed
   if (loading) {
-    if (!props.game.has_community_visible_stats) {
-      return (
-        <div style={{ color: "white" }}>
-          No achievements associated with this title.
-        </div>
-      );
-    } else {
-      return <div style={{ color: "white" }}>Loading...</div>;
-    }
+    return <div style={{ color: "white" }}>Loading...</div>;
   }
 
   //Render achievement list
@@ -144,13 +136,14 @@ function AchievementList(props: AchievementListProps) {
             achievementsSize={totalAchievementData.length}
             achievementsEarned={
               totalAchievementData.filter(
-                (achievement: TotalAchievement) => achievement.achieved
+                (achievement: TotalAchievement) =>
+                  achievement.userData?.achieved
               ).length
             }
           />
         )}
         {/*Achievement List Filter Bar*/}
-        <FilterBar
+        <UserFilterBar
           setSortFilterP={updateSortFilterState}
           setVisibleFilterP={updateVisibleFilterState}
         />
@@ -189,18 +182,29 @@ function AchievementList(props: AchievementListProps) {
                 //If the item is unlocked, check if it should be returned
                 //Show Locked
                 if (visibleFilter == "default") {
-                  return item.achieved == 1 || item.achieved == 0;
+                  return (
+                    item.userData?.achieved == 1 || item.userData?.achieved == 0
+                  );
                 } else if (visibleFilter == "unlocked") {
-                  return item.achieved == 1;
+                  return item.userData?.achieved == 1;
                 } else if (visibleFilter == "locked") {
-                  return item.achieved == 0;
+                  return item.userData?.achieved == 0;
                 } else {
-                  return item.achieved == 1 || item.achieved == 0;
+                  return (
+                    item.userData?.achieved == 1 || item.userData?.achieved == 0
+                  );
                 }
               })
               .map((a) => (
-                <ListboxItem key={a.apiname} textValue={a.apiname}>
-                  <AchievementItem key={a.apiname} data={a} game={props.game} />
+                <ListboxItem
+                  key={a.userData.apiname}
+                  textValue={a.gameData?.internal_name}
+                >
+                  <UserAchievementItem
+                    key={a.gameData?.internal_name}
+                    achievementData={a}
+                    appid={props.game.appid}
+                  />
                 </ListboxItem>
               ))}
           </Listbox>
@@ -212,4 +216,4 @@ function AchievementList(props: AchievementListProps) {
   );
 }
 
-export default AchievementList;
+export default UserAchievementList;

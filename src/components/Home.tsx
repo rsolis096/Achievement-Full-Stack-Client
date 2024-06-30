@@ -1,13 +1,13 @@
 //Utility
 import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
+import { useNavigate } from "react-router-dom";
 
 //Types
 import { WeeklyGame } from "../interfaces/types";
 
 //Components
 import HomeDescription from "./HomeDescription";
-import GameView from "./GameView";
 
 //Styles
 import {
@@ -29,7 +29,9 @@ function getImageURL(id: string) {
 function Home() {
   const [mostPlayedGames, setMostPlayedGames] = useState<WeeklyGame[]>([]);
   const [weeklyGames, setWeeklyGames] = useState<WeeklyGame[]>([]);
+  const navigate = useNavigate();
 
+  //Fetch homescreen game info
   useEffect(() => {
     const fetchData = async () => {
       //Most Played Games
@@ -55,13 +57,17 @@ function Home() {
     fetchData();
   }, []);
 
+  const handleCardPressed = (appid: number) => {
+    navigate("/view/" + appid);
+  };
+
   const drawWeeklyGames = weeklyGames.map((item: WeeklyGame) => (
     <ListboxItem key={item.appid}>
       <Card
         isFooterBlurred
         isPressable
         key={item.appid}
-        onPress={() => console.log("Card Pressed")}
+        onPress={() => handleCardPressed(item.appid)}
       >
         <Image
           removeWrapper
@@ -83,7 +89,7 @@ function Home() {
         isFooterBlurred
         isPressable
         key={item.appid}
-        onPress={() => console.log("Card Pressed")}
+        onPress={() => handleCardPressed(item.appid)}
       >
         <Image
           removeWrapper
@@ -101,63 +107,48 @@ function Home() {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 mx-auto p-2">
+      <div className="flex flex-col gap-4 mx-auto p-2">
         <div id="description" className="w-full text-white">
           <HomeDescription />
         </div>
-        <div id="game-view" className="w-full">
-          <GameView />
-        </div>
-        <div id="games">
-          <div className="flex flex-rows mt-4 w-full">
-            <div>
-              {mostPlayedGames.length > 0 ? (
-                <Listbox
-                  //selectedKeys={selectedKeys}
-                  //onSelectionChange={handleSelectionChange}
-                  topContent={
-                    <p className="text-white">
-                      Top Games by Concurrent Players
-                    </p>
-                  }
-                  className="p-0 gap-0 divide-y overflow-visible shadow-small rounded-medium w-1/2"
-                  disallowEmptySelection
-                  hideSelectedIcon
-                  variant="bordered"
-                  color="default"
-                  label="Selected Game"
-                  selectionMode="single"
-                >
-                  {/*List Items*/}
-                  {drawTopGames}
-                </Listbox>
-              ) : (
-                <p>No Top Games</p>
-              )}
-            </div>
-            <div>
-              {drawWeeklyGames.length > 0 ? (
-                <Listbox
-                  //selectedKeys={selectedKeys}
-                  //onSelectionChange={handleSelectionChange}
-                  topContent={
-                    <p className="text-white">Top Games of the Week</p>
-                  }
-                  className="p-0 gap-0 divide-y overflow-visible shadow-small rounded-medium w-1/2"
-                  disallowEmptySelection
-                  hideSelectedIcon
-                  variant="bordered"
-                  color="default"
-                  label="Selected Game"
-                  selectionMode="single"
-                >
-                  {/*List Items*/}
-                  {drawWeeklyGames}
-                </Listbox>
-              ) : (
-                <p>No Weekly Games</p>
-              )}
-            </div>
+        <div id="list-box-grid" className="grid grid-cols-2 mt-4 gap-10 w-1/2 ">
+          <div className=" mt-2 shadow-lg rounded-lg  p-1 bg-foregroundColor/40  border-white/20 border-2 ">
+            <p className="text-white">Top Games by Concurrent Players</p>
+            {mostPlayedGames.length > 0 ? (
+              <Listbox
+                className="divide-y rounded-medium overflow-auto custom-scrollbar h-screen "
+                disallowEmptySelection
+                hideSelectedIcon
+                variant="bordered"
+                color="default"
+                label="Selected Game"
+                selectionMode="single"
+              >
+                {/*List Items*/}
+                {drawTopGames}
+              </Listbox>
+            ) : (
+              <p>No Top Games</p>
+            )}
+          </div>
+          <div className=" mt-2 shadow-lg rounded-lg  p-1 bg-foregroundColor/40  border-white/20 border-2 ">
+            <p className="text-white">Top Games of the Week</p>
+            {drawWeeklyGames.length > 0 ? (
+              <Listbox
+                className="divide-y rounded-medium overflow-auto custom-scrollbar h-screen "
+                disallowEmptySelection
+                hideSelectedIcon
+                variant="bordered"
+                color="default"
+                label="Selected Game"
+                selectionMode="single"
+              >
+                {/*List Items*/}
+                {drawWeeklyGames}
+              </Listbox>
+            ) : (
+              <p>No Weekly Games</p>
+            )}
           </div>
         </div>
       </div>
