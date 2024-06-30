@@ -14,8 +14,8 @@ function HomeDescription() {
           View detailed statistics and progress for each game in your library
         </li>
         <li>Toggle demo mode to explore the site without logging in</li>
+        <li>Explore the most popular games and their achievements</li>
         <li>PLANNED: Compare your achievements with global stats</li>
-        <li>PLANNED: Explore the most popular games and their achievements</li>
       </ul>
       <p className="mb-4">
         To get started, simply sign in with your Steam account using the "Sign

@@ -62,7 +62,7 @@ function Home() {
   };
 
   const drawWeeklyGames = weeklyGames.map((item: WeeklyGame) => (
-    <ListboxItem key={item.appid}>
+    <ListboxItem key={item.appid} textValue={item.name}>
       <Card
         isFooterBlurred
         isPressable
@@ -84,7 +84,7 @@ function Home() {
   ));
 
   const drawTopGames = mostPlayedGames.map((item: WeeklyGame) => (
-    <ListboxItem key={item.appid}>
+    <ListboxItem key={item.appid} textValue={item.name}>
       <Card
         isFooterBlurred
         isPressable
