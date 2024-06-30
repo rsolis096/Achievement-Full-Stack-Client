@@ -2,10 +2,10 @@
 
 //Utility
 import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { DemoContext } from "../context/DemoModeContext.tsx";
-import useDebounce from "../hooks/useDebounce.tsx";
+import { DemoContext } from "../../context/DemoModeContext.tsx";
+import useDebounce from "../../hooks/useDebounce.tsx";
 import axios, { AxiosResponse } from "axios";
-import { Game } from "../interfaces/types.tsx";
+import { OwnedGame } from "../../interfaces/types.tsx";
 
 //Styles
 import {
@@ -19,16 +19,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 //Components
-import GameItem from "./GameItem.tsx";
+import GameItem from "../GameItem.tsx";
 
 //Passed back up to App.tsx, used to display game achievement list
-interface GamesListProps {
-  setSelectedGame: (game: Game) => void;
+interface UserGamesListProps {
+  setSelectedGame: (game: OwnedGame) => void;
 }
 
-function GamesList(props: GamesListProps): JSX.Element {
-  const [userGames, setUserGames] = useState<Game[]>([]);
-  const [userGamesSearch, setUserGamesSearch] = useState<Game[]>([]);
+function UserGamesList(props: UserGamesListProps): JSX.Element {
+  const [userGames, setUserGames] = useState<OwnedGame[]>([]);
+  const [userGamesSearch, setUserGamesSearch] = useState<OwnedGame[]>([]);
   const [gameCount, setGamesCount] = useState<number>(10);
   const [gameSearch, setGameSearch] = useState<string>("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
@@ -36,52 +36,56 @@ function GamesList(props: GamesListProps): JSX.Element {
   // Debounce when gameSearch input value is changed (see custom hook)
   const debouncedSearchTerm = useDebounce(gameSearch, 200);
 
-  const demoModeOn = useContext(DemoContext);
-
+  const demoMode = useContext(DemoContext);
   //Post All User Games from server
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response: AxiosResponse<Game[]> = await axios.post(
-          import.meta.env.VITE_SERVER_DOMAIN +
-            "/api/games/getUserGames?demo=" +
-            demoModeOn,
+        const response: AxiosResponse<OwnedGame[]> = await axios.post(
+          import.meta.env.VITE_SERVER_DOMAIN + "/api/games/getUserGames",
           {
             count: gameCount,
+            demo: demoMode.demoModeOn,
           },
           {
-            withCredentials: !demoModeOn,
+            withCredentials: !demoMode.demoModeOn,
             headers: {
               "Content-Type": "application/json",
             },
           }
         );
-        setUserGames(response.data);
+
+        if (response.data.length) {
+          setUserGames(response.data);
+        } else {
+          console.log(response.data);
+          console.log("authentication issue");
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
         setUserGames([]);
       }
     };
     fetchData();
-  }, [gameCount, demoModeOn]);
+  }, [gameCount, demoMode.demoModeOn]);
 
   //Fetch the game data from the server with search restrictions
   useEffect(() => {
     if (debouncedSearchTerm) {
       const fetchData = async () => {
         try {
-          const response: AxiosResponse<Game[]> = await axios.post(
+          const response: AxiosResponse<OwnedGame[]> = await axios.post(
             import.meta.env.VITE_SERVER_DOMAIN +
-              "/api/games/getUserGames/search?demo=" +
-              demoModeOn,
+              "/api/games/getUserGames/search",
             {
+              demo: demoMode.demoModeOn,
               lookup: gameSearch,
               headers: {
                 "Content-Type": "application/json",
               },
             },
             {
-              withCredentials: !demoModeOn,
+              withCredentials: !demoMode.demoModeOn,
             }
           );
           setUserGamesSearch(response.data);
@@ -103,6 +107,7 @@ function GamesList(props: GamesListProps): JSX.Element {
   //Handle changes to the search Input box
   const handleSearchBoxChange = (e: ChangeEvent<HTMLInputElement>) => {
     //Making individual calls to the server per change doesn't work well. Need to find out what's going on or take a different approach
+    console.log("current search: ", e.target.value);
     setGameSearch(e.target.value);
   };
 
@@ -114,13 +119,12 @@ function GamesList(props: GamesListProps): JSX.Element {
   };
 
   //When a game is selected, send this game back to App.tsx, it will then be used by AchievementList
-  const handleGameClick = (game: Game) => {
+  const handleGameClick = (game: OwnedGame) => {
     props.setSelectedGame(game);
   };
 
   // Handle selection change
   const handleSelectionChange = (keys: Selection) => {
-    console.log("Selection Changed");
     setSelectedKeys(keys);
   };
 
@@ -134,6 +138,9 @@ function GamesList(props: GamesListProps): JSX.Element {
     .map((item) => (
       <ListboxItem
         key={item.appid}
+        classNames={{
+          selectedIcon: "text-white",
+        }}
         textValue={item.name}
         onPress={() => handleGameClick(item)}
       >
@@ -155,40 +162,49 @@ function GamesList(props: GamesListProps): JSX.Element {
   return (
     <>
       {/*Search Bar*/}
-      <Input
-        id="input-with-icon-adornment"
-        placeholder="Search for a game in your library"
-        onChange={handleSearchBoxChange}
-        startContent={<SearchIcon sx={{ color: "grey" }} />}
-      />
-      {/*Game List*/}
-      <div className="bg-foregroundColor mt-2 h-5/6 shadow-lg rounded-lg overflow-auto p-1 custom-scrollbar rounded-lg	border-gray-500	 border-2 ">
-        <Listbox
-          selectedKeys={selectedKeys}
-          onSelectionChange={handleSelectionChange}
+      <div style={{ color: "white" }}>
+        <Input
+          id="input-with-icon-adornment"
           classNames={{
-            list: "overflow-auto",
+            inputWrapper: "border-white/20",
           }}
-          defaultSelectedKeys={["1"]}
-          variant="shadow"
-          color="danger"
-          label="Selected Game"
-          selectionMode="single"
-        >
-          {/*List Items*/}
-          {userGamesSearch.length > 0 ? gameItemsSearch : gameItemsDefault}
-        </Listbox>
+          placeholder="Search for a game in your library"
+          variant="bordered"
+          onChange={handleSearchBoxChange}
+          isClearable={true}
+          onClear={() => setGameSearch("")}
+          startContent={<SearchIcon sx={{ color: "white" }} />}
+        />
+      </div>
+      {/*Game List*/}
+      <div className="bg-foregroundColor/40 mt-2 h-4/6 shadow-lg rounded-lg overflow-auto p-1 custom-scrollbar border-white/20	 border-2 ">
+        {userGames.length > 0 && (
+          <Listbox
+            selectedKeys={selectedKeys}
+            onSelectionChange={handleSelectionChange}
+            className="p-0 gap-0 divide-y   overflow-visible shadow-small rounded-medium"
+            disallowEmptySelection
+            variant="bordered"
+            color="default"
+            label="Selected Game"
+            selectionMode="single"
+          >
+            {/*List Items*/}
+            {userGamesSearch.length > 0 ? gameItemsSearch : gameItemsDefault}
+          </Listbox>
+        )}
       </div>
 
       {/*Expand Button*/}
       {gameSearch.length == 0 ? (
         <Button
-          className="w-full h-8 py-1"
+          className="w-full h-6 py-1 mt-1"
           isIconOnly
+          variant="bordered"
           aria-label="Expand"
           onClick={handleExpandButton}
         >
-          <ExpandMoreIcon />
+          <ExpandMoreIcon className="text-white" />
         </Button>
       ) : (
         <p style={{ color: "white" }}>End of Results</p>
@@ -197,4 +213,4 @@ function GamesList(props: GamesListProps): JSX.Element {
   );
 }
 
-export default GamesList;
+export default UserGamesList;

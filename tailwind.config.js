@@ -12,7 +12,8 @@ export default {
     extend: {
       colors: {
         backgroundColor: "#181a1b",
-        foregroundColor: "#252626"
+        foregroundColor: "#252626",
+        navbarColor: "#414749",
       },
     },
   },

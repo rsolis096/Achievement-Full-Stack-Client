@@ -2,10 +2,10 @@
 import { Image } from "@nextui-org/react";
 
 // Utility
-import { Game } from "../interfaces/types.tsx";
+import { OwnedGame } from "../interfaces/types.tsx";
 
 interface TitleBarProps {
-  game: Game;
+  game: OwnedGame;
   achievementsSize: number;
   achievementsEarned: number;
 }
@@ -24,7 +24,7 @@ function TitleBar(props: TitleBarProps) {
         <Image
           removeWrapper
           alt={props.game.name}
-          className="z-0 w-full h-full object-cover rounded-lg	border-2 border-white"
+          className="z-0 w-full h-full object-cover rounded-lg	border-2 border-white/20"
           src={getImageURL(String(props.game.appid))}
         />
       </div>
@@ -34,17 +34,22 @@ function TitleBar(props: TitleBarProps) {
             {props.game.name}
           </h1>
         </div>
-        <div>
-          <h1 className="text-lg" style={{ color: "white" }}>
-            Total Playtime: {props.game.playtime_forever}
-          </h1>
-        </div>
-        <div>
-          <h1 className="text-lg" style={{ color: "white" }}>
-            Achievements Earned: {props.achievementsEarned} /{" "}
-            {props.achievementsSize}
-          </h1>
-        </div>
+        {props.achievementsEarned != -1 && (
+          <>
+            <div>
+              <h1 className="text-lg" style={{ color: "white" }}>
+                Total Playtime: {(props.game.playtime_forever / 60).toFixed(1)}{" "}
+                hours
+              </h1>
+            </div>
+            <div>
+              <h1 className="text-lg" style={{ color: "white" }}>
+                Achievements Earned: {props.achievementsEarned} /{" "}
+                {props.achievementsSize}
+              </h1>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
