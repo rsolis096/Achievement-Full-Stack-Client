@@ -5,7 +5,7 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { DemoContext } from "../../context/DemoModeContext.tsx";
 import useDebounce from "../../hooks/useDebounce.tsx";
 import axios, { AxiosResponse } from "axios";
-import { OwnedGame } from "../../interfaces/types.tsx";
+import { OwnedGame, App } from "../../interfaces/types.tsx";
 
 //Styles
 import {
@@ -144,7 +144,10 @@ function UserGamesList(props: UserGamesListProps): JSX.Element {
         textValue={item.name}
         onPress={() => handleGameClick(item)}
       >
-        <GameItem key={item.appid} game={item} />
+        <GameItem
+          key={item.appid}
+          game={{ name: item.name, type: "game", appid: item.appid } as App}
+        />
       </ListboxItem>
     ));
 
@@ -155,7 +158,10 @@ function UserGamesList(props: UserGamesListProps): JSX.Element {
       textValue={item.name}
       onClick={() => handleGameClick(item)}
     >
-      <GameItem key={item.appid} game={item} />
+      <GameItem
+        key={item.appid}
+        game={{ name: item.name, type: "game", appid: item.appid } as App}
+      />
     </ListboxItem>
   ));
 
