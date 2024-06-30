@@ -1,7 +1,7 @@
 //Utility
 import { useState, useEffect } from "react";
 import { SteamUser } from "../interfaces/types.tsx";
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 //Styling
 
@@ -40,23 +40,24 @@ function App() {
   //Main Logged in screen
   return (
     <>
-      <DemoContext.Provider value={{ demoModeOn, setDemoMode }}>
-        <SteamUserContext.Provider value={{ user, setUser }}>
-          <div className="flex flex-col bg-backgroundColor min-h-screen ">
-            {/* Upper Navbar - Contains the login and demo mode code*/}
-            <UpperNavBar />
-
-            <Routes>
-              <Route path="/home" element={<Home />} />
-              <Route path="/" element={<Home />} />
-              <Route path="/view/:appid" element={<GameView />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/library/demo" element={<Library />} />
-              <Route path="/library/:userId" element={<Library />} />
-            </Routes>
-          </div>
-        </SteamUserContext.Provider>
-      </DemoContext.Provider>
+      <Router>
+        <DemoContext.Provider value={{ demoModeOn, setDemoMode }}>
+          <SteamUserContext.Provider value={{ user, setUser }}>
+            <div className="flex flex-col bg-backgroundColor min-h-screen ">
+              {/* Upper Navbar - Contains the login and demo mode code*/}
+              <UpperNavBar />
+              <Routes>
+                <Route path="/home" element={<Home />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/view/:appid" element={<GameView />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/library/demo" element={<Library />} />
+                <Route path="/library/:userId" element={<Library />} />
+              </Routes>
+            </div>
+          </SteamUserContext.Provider>
+        </DemoContext.Provider>
+      </Router>
     </>
   );
 }
