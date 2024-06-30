@@ -110,7 +110,7 @@ function UpperNavBar() {
         displayName: "none",
         photos: [],
       });
-      navigate("/home");
+      navigate("/");
     } else {
       console.log("Logout Failed");
     }
@@ -167,7 +167,7 @@ function UpperNavBar() {
       </NavbarContent>
       <NavbarContent justify="center" className="font-bold">
         <NavbarItem isActive>
-          <Link underline="hover" size="lg" href="/home" aria-current="page">
+          <Link underline="hover" size="lg" href="/" aria-current="page">
             Home
           </Link>
         </NavbarItem>
