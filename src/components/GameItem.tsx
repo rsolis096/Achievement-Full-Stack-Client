@@ -1,12 +1,12 @@
 //Mounted by GamesList
 //Utility
-import { Game } from "../interfaces/types";
+import { App } from "../interfaces/types";
 
 //Styles
 import { Card, Image, CardFooter } from "@nextui-org/react";
 
 interface GameItemProps {
-  game: Game;
+  game: App;
 }
 
 const imageURL: string = "https://cdn.akamai.steamstatic.com/steam/apps/";
