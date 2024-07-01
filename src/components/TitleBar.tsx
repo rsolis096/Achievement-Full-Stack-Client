@@ -5,11 +5,7 @@ import SyncIcon from "@mui/icons-material/Sync";
 
 // Utility
 import { OwnedGame } from "../interfaces/types.tsx";
-import { SteamUserContext } from "../context/SteamUserContext.tsx";
-import { useContext } from "react";
 import { Button } from "@nextui-org/react";
-//Types
-import { SteamUserContextType } from "../interfaces/types.tsx";
 
 interface TitleBarProps {
   game: OwnedGame;
@@ -28,8 +24,6 @@ function getImageURL(id: string) {
 }
 
 function TitleBar(props: TitleBarProps) {
-  const { user } = useContext<SteamUserContextType>(SteamUserContext);
-
   const handleSyncButton = () => {
     //Call the server to sync the achievements for this game
     props.setSyncAchievements(props.syncAchievements + 1);
