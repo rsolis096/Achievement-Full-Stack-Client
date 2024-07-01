@@ -25,6 +25,12 @@ interface UserAchievementListProps {
   game: OwnedGame;
 }
 
+interface Result {
+  userAchievements: UserAchievement[];
+  time: number;
+  last_sync: string;
+}
+
 function UserAchievementList(props: UserAchievementListProps) {
   //This state variable holds all the combined achievement data
   const [totalAchievementData, setTotalAchievementData] = useState<
@@ -33,27 +39,31 @@ function UserAchievementList(props: UserAchievementListProps) {
 
   const [sortFilter, setSortFilter] = useState<string>("ltm");
   const [visibleFilter, setVisibleFilter] = useState<string>("default");
-
-  const [loading, setLoading] = useState(true);
+  const [syncRequested, setSyncRequested] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [lastSync, setLastSync] = useState<string>("null");
 
   const demoMode = useContext(DemoContext);
 
   //Make a post request to the server to get user achievement info
   const postUserAchievementData = async (): Promise<UserAchievement[]> => {
     try {
-      const response: AxiosResponse<UserAchievement[]> = await axios.post(
+      const response: AxiosResponse<Result> = await axios.post(
         import.meta.env.VITE_SERVER_DOMAIN +
           "/api/achievements/getUserAchievements",
         {
           demo: demoMode.demoModeOn,
           appid: props.game.appid,
+          sync: syncRequested != 0,
           headers: { "Content-Type": "application/json" },
         },
         {
           withCredentials: !demoMode.demoModeOn,
         }
       );
-      return response.data;
+      const result: Result = response.data;
+      setLastSync(result.last_sync);
+      return result.userAchievements;
     } catch (err) {
       console.log(err);
     }
@@ -108,7 +118,7 @@ function UserAchievementList(props: UserAchievementListProps) {
     };
 
     fetchData();
-  }, []);
+  }, [syncRequested]);
 
   //Handles sorting order filter
   const updateSortFilterState = (sortType: string) => {
@@ -134,6 +144,9 @@ function UserAchievementList(props: UserAchievementListProps) {
           <TitleBar
             game={props.game}
             achievementsSize={totalAchievementData.length}
+            setSyncAchievements={setSyncRequested}
+            syncAchievements={syncRequested}
+            lastSync={lastSync}
             achievementsEarned={
               totalAchievementData.filter(
                 (achievement: TotalAchievement) =>

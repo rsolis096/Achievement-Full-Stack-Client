@@ -32,11 +32,10 @@ function UserGamesList(props: UserGamesListProps): JSX.Element {
   const [gameCount, setGamesCount] = useState<number>(10);
   const [gameSearch, setGameSearch] = useState<string>("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-
   // Debounce when gameSearch input value is changed (see custom hook)
   const debouncedSearchTerm = useDebounce(gameSearch, 200);
-
   const demoMode = useContext(DemoContext);
+
   //Post All User Games from server
   useEffect(() => {
     const fetchData = async () => {
@@ -111,7 +110,7 @@ function UserGamesList(props: UserGamesListProps): JSX.Element {
     setGameSearch(e.target.value);
   };
 
-  //Handles when the user clicks expand button
+  //Handles when the user clicks expand button on the game list
   const handleExpandButton = () => {
     setGamesCount((prevState) => {
       return prevState + 5;

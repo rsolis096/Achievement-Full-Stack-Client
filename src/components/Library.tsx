@@ -6,6 +6,7 @@ import UserGamesList from "./UserComponents/UserGamesList.tsx";
 
 function Library() {
   const [selectedGame, setSelectedGame] = useState<OwnedGame>();
+
   //Used by UserGamesList to set which game should be rendered in the achievement list
   const updateSelectedGameState = (game: OwnedGame) => {
     setSelectedGame(game);
