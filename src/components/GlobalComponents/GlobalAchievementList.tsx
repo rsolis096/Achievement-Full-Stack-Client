@@ -126,6 +126,11 @@ function GlobalAchievementList(props: GlobalAchievementListProps) {
               }}
               achievementsSize={gameAchievementData.length}
               achievementsEarned={-1}
+              setSyncAchievements={(val: number) => {
+                console.log(val);
+              }}
+              syncAchievements={0}
+              lastSync="null"
             />
           </div>
 
