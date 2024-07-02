@@ -54,7 +54,7 @@ export interface DemoContextType {
   setDemoMode: (value: boolean) => void;
 }
 
-export interface WeeklyGame {
+export interface RankedGame {
   appid: number;
   name: string;
   rank: number;
