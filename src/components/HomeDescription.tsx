@@ -1,7 +1,9 @@
 function HomeDescription() {
   return (
     <>
-      <h1 className="text-4xl mb-4">Welcome to Completion Tracker</h1>
+      <h1 className="text-4xl mb-4">
+        Welcome to Completion Tracker (Work In Progress)
+      </h1>
       <p className="text-2xl mb-4">
         Completion Tracker is a comprehensive tool designed to help you track
         and manage your achievements across all your Steam games. By integrating
