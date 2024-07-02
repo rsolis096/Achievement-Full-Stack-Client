@@ -9,9 +9,9 @@ function GameView() {
   return (
     <>
       {/* Main Content Area */}
-      <div className="flex flex-row gap-2 w-full h-screen p-2 overflow-hidden">
+      <div className="flex flex-row gap-2 w-full h-screen p-2 justify-center">
         {/*Achievements List Area*/}
-        <div className="bg-foregroundColor  md:w-8/12 lg:w-9/12 xl:w-11/12 shadow-lg p-2  rounded-lg	border-white/20	 border-2 h-dvh">
+        <div className="bg-foregroundColor  w-full shadow-lg p-2  rounded-lg	border-white/20	 border-2 ">
           {/*Actual Achievement List*/}
           {appid && (
             <GlobalAchievementList key={appid} appid={parseInt(appid)} />
