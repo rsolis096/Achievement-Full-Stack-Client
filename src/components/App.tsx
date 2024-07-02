@@ -43,7 +43,7 @@ function App() {
       <Router>
         <DemoContext.Provider value={{ demoModeOn, setDemoMode }}>
           <SteamUserContext.Provider value={{ user, setUser }}>
-            <div className=" dark text-foreground bg-backgroundColor flex flex-col min-h-screen ">
+            <div className=" dark text-foreground bg-backgroundColor min-h-screen ">
               {/* Upper Navbar - Contains the login and demo mode code*/}
               <UpperNavBar />
               <Routes>

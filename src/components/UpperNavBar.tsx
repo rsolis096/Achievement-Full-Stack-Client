@@ -126,7 +126,11 @@ function UpperNavBar() {
   };
 
   return (
-    <Navbar className="bg-white/10 rounded-b-lg" maxWidth={"full"} isBordered>
+    <Navbar
+      className="bg-white/10 rounded-b-lg overflow-x-auto"
+      maxWidth={"full"}
+      isBordered
+    >
       {/* Upper Navbar */}
       <NavbarContent justify="start">
         {/*Profile Picture*/}
@@ -210,11 +214,7 @@ function UpperNavBar() {
               }}
               color="warning"
             >
-              {demoMode.demoModeOn ? (
-                <p>Turn Off Demo Mode</p>
-              ) : (
-                <p>Turn On Demo Mode</p>
-              )}
+              Turn Off Demo Mode
             </Switch>
           )}
         </NavbarItem>

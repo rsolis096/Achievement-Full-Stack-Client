@@ -41,12 +41,12 @@ function Home() {
 
   return (
     <>
-      <div className="flex flex-col gap-4 mx-auto p-2">
-        <div id="description" className="w-full text-white">
+      <div className="flex flex-col gap-4 mx-auto p-2 w-screen">
+        <div id="description" className=" text-white text-center">
           <HomeDescription />
         </div>
 
-        <div className="flex flex-rows gap-4">
+        <div className="flex flex-col 2xl:flex-row lg:flex-row sm:flex-row md:flex-row gap-4 ">
           <HomePageTable rows={weeklyGames} title="Top Games of the Week" />
           <HomePageTable
             rows={mostPlayedGames}

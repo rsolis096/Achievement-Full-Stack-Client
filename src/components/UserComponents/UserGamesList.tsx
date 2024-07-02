@@ -203,7 +203,7 @@ function UserGamesList(props: UserGamesListProps): JSX.Element {
       {/*Expand Button*/}
       {gameSearch.length == 0 ? (
         <Button
-          className="w-full h-6 py-1 mt-1"
+          className="w-full h-6 mt-1"
           isIconOnly
           variant="bordered"
           aria-label="Expand"
