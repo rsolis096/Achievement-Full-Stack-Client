@@ -210,7 +210,11 @@ function UpperNavBar() {
               }}
               color="warning"
             >
-              Turn Off Demo Mode
+              {demoMode.demoModeOn ? (
+                <p>Turn Off Demo Mode</p>
+              ) : (
+                <p>Turn On Demo Mode</p>
+              )}
             </Switch>
           )}
         </NavbarItem>
