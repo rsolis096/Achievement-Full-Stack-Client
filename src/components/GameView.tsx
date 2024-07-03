@@ -18,7 +18,6 @@ function GameView() {
           )}
         </div>
       </div>
-      ;
     </>
   );
 }

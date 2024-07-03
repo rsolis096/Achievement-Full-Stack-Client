@@ -28,27 +28,25 @@ function GlobalAchievementItem(props: GlobalAchievementItemProps) {
   */
 
   return (
-    <>
-      <Card isBlurred className={"border-none bg-background/80"} shadow="sm">
-        <CardBody>
-          <div className="flex flex-cols-6 gap-2">
-            <Image
-              alt="Album cover"
-              className="max-w-20"
-              src={iconURL + props.game.appid + "/" + props.data.icon}
-            />
-            <div className="flex flex-col justify-start">
-              <h1 className="text-large font-medium mt-2">
-                {props.data.localized_name}
-              </h1>
-              <h3 className="font-semibold text-foreground/90">
-                {props.data.localized_desc}
-              </h3>
-            </div>
+    <Card isBlurred className="border-none bg-background/80 shadow-sm">
+      <CardBody>
+        <div className="flex gap-2">
+          <Image
+            alt="Album cover"
+            className="max-w-20"
+            src={iconURL + props.game.appid + "/" + props.data.icon}
+          />
+          <div className="flex flex-col justify-start flex-grow overflow-hidden">
+            <h1 className="text-large font-medium mt-2">
+              {props.data.localized_name}
+            </h1>
+            <h3 className="font-semibold text-foreground/90 whitespace-normal">
+              {props.data.localized_desc}
+            </h3>
           </div>
-        </CardBody>
-      </Card>
-    </>
+        </div>
+      </CardBody>
+    </Card>
   );
 }
 

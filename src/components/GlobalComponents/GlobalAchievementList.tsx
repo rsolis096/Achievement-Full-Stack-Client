@@ -144,6 +144,7 @@ function GlobalAchievementList(props: GlobalAchievementListProps) {
                 defaultSelectedKeys={["1"]}
                 variant="solid"
                 selectionMode="none"
+                classNames={{ list: "w-full " }}
               >
                 {/*Sort the Achievement Data */}
                 {gameAchievementData.map((a: GameAchievement) => (
@@ -172,10 +173,3 @@ function GlobalAchievementList(props: GlobalAchievementListProps) {
 }
 
 export default GlobalAchievementList;
-
-/*
-        <FilterBar
-          setSortFilterP={updateSortFilterState}
-          setVisibleFilterP={updateVisibleFilterState}
-        />
-        */

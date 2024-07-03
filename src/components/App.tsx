@@ -46,14 +46,17 @@ function App() {
             <div className=" dark text-foreground bg-backgroundColor min-h-screen ">
               {/* Upper Navbar - Contains the login and demo mode code*/}
               <UpperNavBar />
-              <Routes>
-                <Route path="/home" element={<Home />} />
-                <Route path="/" element={<Home />} />
-                <Route path="/view/:appid" element={<GameView />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/library/demo" element={<Library />} />
-                <Route path="/library/:userId" element={<Library />} />
-              </Routes>
+              <div className="py-1">
+                {/* Adjust padding-top as needed to prevent content overlap */}
+                <Routes>
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/" element={<Home />} />
+                  <Route path="/view/:appid" element={<GameView />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/library/demo" element={<Library />} />
+                  <Route path="/library/:userId" element={<Library />} />
+                </Routes>
+              </div>
             </div>
           </SteamUserContext.Provider>
         </DemoContext.Provider>
