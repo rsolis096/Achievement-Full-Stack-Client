@@ -213,6 +213,11 @@ function UpperNavBar() {
             alt="steam-pfp"
             src={!demoMode.demoModeOn ? user.photos[2]?.value : ""}
             className="text-white bg-white/10"
+            onClick={() => {
+              if (!user.authenticated) {
+                handleLogin();
+              }
+            }}
           />
         </NavbarItem>
 
@@ -223,12 +228,19 @@ function UpperNavBar() {
               {demoMode.demoModeOn ? "DEMO" : user.displayName}
             </div>
           ) : (
-            <Button variant="light" onPress={handleLogin}>
-              <Image
-                src="https://community.akamai.steamstatic.com/public/images/signinthroughsteam/sits_01.png"
-                alt="Sign in with Steam"
-              />
-            </Button>
+            <>
+              <Button
+                isIconOnly
+                className="w-fit"
+                variant="light"
+                onPress={handleLogin}
+              >
+                <Image
+                  src="https://community.akamai.steamstatic.com/public/images/signinthroughsteam/sits_01.png"
+                  alt="Sign in with Steam"
+                />
+              </Button>
+            </>
           )}
         </NavbarItem>
       </NavbarContent>
