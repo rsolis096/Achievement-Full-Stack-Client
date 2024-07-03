@@ -58,7 +58,11 @@ function HomePageTable(props: HomePageTableProps) {
       case "appid":
         return <Image width={100} src={getImageURL(item.appid)} />;
       case "name":
-        return <p>{item.name}</p>;
+        return (
+          <p className=" text-ellipsis whitespace-nowrap overflow-hidden">
+            {item.name}
+          </p>
+        );
       case "rank":
         return <p>{item.rank}</p>;
     }
@@ -79,10 +83,10 @@ function HomePageTable(props: HomePageTableProps) {
     <Table
       aria-label="Example table with dynamic content"
       isCompact
+      layout="fixed"
       onSelectionChange={handleCardPressed}
       bottomContentPlacement="inside"
       selectionMode="single"
-      showSelectionCheckboxes
       selectionBehavior="replace"
       classNames={{
         wrapper: "text-white border border-white/20",
@@ -106,11 +110,18 @@ function HomePageTable(props: HomePageTableProps) {
       }
     >
       <TableHeader columns={columns}>
-        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+        {(column) => (
+          <TableColumn
+            key={column.key}
+            width={column.key === "rank" ? 50 : column.key == "appid" ? 150 : 0}
+          >
+            {column.label}
+          </TableColumn>
+        )}
       </TableHeader>
       <TableBody emptyContent={<p>Loading...</p>} items={items}>
         {(item) => (
-          <TableRow className="cursor-pointer" key={item.rank}>
+          <TableRow className="cursor-pointer " key={item.rank}>
             {(columnKey) => (
               <TableCell>{renderCell(item, columnKey as string)}</TableCell>
             )}

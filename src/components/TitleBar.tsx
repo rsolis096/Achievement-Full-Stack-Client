@@ -32,7 +32,7 @@ function TitleBar(props: TitleBarProps) {
   return (
     <>
       <div className="flex flex-cols px-3 mb-3 8 	">
-        <div className="md:w-1/2 lg:w-1/4 xl:w-1/6">
+        <div className="w-1/2 md:w-1/4 lg:w-1/6">
           <Image
             removeWrapper
             alt={props.game.name}
@@ -40,12 +40,15 @@ function TitleBar(props: TitleBarProps) {
             src={getImageURL(String(props.game.appid))}
           />
         </div>
-        <div className=" w-3/4 ml-2 justify-center flex-rows">
+        <div className="ml-2 flex-rows">
           <div>
             <h1 className="text-xl" style={{ color: "white" }}>
               {props.game.name}
             </h1>
           </div>
+
+          {/*Everything below is user specific*/}
+
           {props.achievementsEarned != -1 && (
             <div>
               <h1 className="text-lg" style={{ color: "white" }}>
@@ -72,6 +75,7 @@ function TitleBar(props: TitleBarProps) {
             </h1>
           </div>
         </div>
+
         {props.achievementsEarned != -1 && (
           <div className="flex flex-cols text-white">
             {props.lastSync != "null" && (

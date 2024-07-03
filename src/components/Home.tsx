@@ -42,7 +42,7 @@ function Home() {
   return (
     <>
       <div className="flex flex-col gap-4 mx-auto p-2 w-screen">
-        <div id="description" className=" text-white text-center">
+        <div id="description" className=" text-white ">
           <HomeDescription />
         </div>
 
