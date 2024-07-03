@@ -182,12 +182,12 @@ function UserGamesList(props: UserGamesListProps): JSX.Element {
         />
       </div>
       {/*Game List*/}
-      <div className="bg-foregroundColor/40 mt-2 h-4/6 shadow-lg rounded-lg overflow-auto p-1 custom-scrollbar border-white/20	 border-2 ">
+      <div className="bg-foregroundColor/40 mt-2 h-4/6 sm:h-5/6 md:h-fit shadow-lg rounded-lg overflow-auto p-1 custom-scrollbar border-white/20	 border-2 ">
         {userGames.length > 0 && (
           <Listbox
             selectedKeys={selectedKeys}
             onSelectionChange={handleSelectionChange}
-            className="p-0 gap-0 divide-y   overflow-visible shadow-small rounded-medium"
+            className="p-0 gap-0 divide-y   overflow-visible shadow-small rounded-medium "
             disallowEmptySelection
             variant="bordered"
             color="default"

@@ -37,7 +37,7 @@ function FilterBar(props: FilterBarProps) {
   };
 
   return (
-    <div className="flex flex-rows items-center px-3 gap-4">
+    <div className="flex flex-col 2xl:flex-row lg:flex-row sm:flex-row md:flex-row items-center px-3 gap-4">
       <div>
         <Dropdown>
           <DropdownTrigger>

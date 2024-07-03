@@ -15,14 +15,14 @@ function Library() {
   return (
     <>
       {/* Main Content Area */}
-      <div className="flex flex-col 2xl:flex-row h-screen lg:flex-row sm:flex-row md:flex-row">
+      <div className="flex flex-col 2xl:flex-row lg:flex-row sm:flex-row md:flex-row">
         {/*Games Bar (Left Hand Side) */}
-        <div className="w-full h-full sm:w-5/12 md:w-4/12 lg:w-3/12 xl:w-3/12  ">
+        <div className=" h-96 sm:w-5/12 md:w-4/12 lg:w-3/12 xl:w-3/12  ">
           <UserGamesList setSelectedGame={updateSelectedGameState} />
         </div>
 
         {/*Achievements List Area*/}
-        <div className="bg-foregroundColor w-full shadow-lg p-2 rounded-lg	border-white/20	 border-2">
+        <div className="w-full  bg-foregroundColor shadow-lg p-2 rounded-lg	border-white/20	 border-2 ">
           {/*Actual Achievement List*/}
           {selectedGame ? (
             <UserAchievementList key={selectedGame.appid} game={selectedGame} />

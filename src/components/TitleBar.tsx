@@ -31,12 +31,12 @@ function TitleBar(props: TitleBarProps) {
 
   return (
     <>
-      <div className="flex flex-cols px-3 mb-3 8 	">
+      <div className="flex flex-row ">
         <div className="w-1/2 md:w-1/4 lg:w-1/6">
           <Image
             removeWrapper
             alt={props.game.name}
-            className="z-0 w-full h-full object-cover rounded-lg	border-2 border-white/20"
+            className="z-0 object-cover rounded-lg	border-2 border-white/20"
             src={getImageURL(String(props.game.appid))}
           />
         </div>
