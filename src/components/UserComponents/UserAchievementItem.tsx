@@ -53,11 +53,11 @@ function UserAchievementItem(props: UserAchievementItemProps) {
                   : props.achievementData.gameData?.icon_gray)
               }
             />
-            <div className="flex flex-col justify-start">
+            <div className="flex flex-col justify-start flex-grow overflow-hidden">
               <h1 className="text-large font-medium mt-2">
                 {props.achievementData.gameData?.localized_name}
               </h1>
-              <h3 className="font-semibold text-foreground/90">
+              <h3 className="font-semibold text-foreground/90 whitespace-normal">
                 {props.achievementData.gameData?.localized_desc}
               </h3>
             </div>
