@@ -13,17 +13,16 @@ function Library() {
   };
 
   return (
-    <>
+    <div className="h-screen">
       {/* Main Content Area */}
-      <div className="flex flex-col 2xl:flex-row lg:flex-row sm:flex-row md:flex-row">
-        {/*Games Bar (Left Hand Side) */}
-        <div className=" h-96 sm:w-5/12 md:w-4/12 lg:w-3/12 xl:w-3/12  ">
+      <div className="flex flex-col sm:flex-row h-full">
+        {/* Games Bar (Left Hand Side) */}
+        <div className="sm:w-5/12 md:w-4/12 lg:w-3/12 xl:w-3/12 sm:h-11/12">
           <UserGamesList setSelectedGame={updateSelectedGameState} />
         </div>
-
-        {/*Achievements List Area*/}
-        <div className="w-full  bg-foregroundColor shadow-lg p-2 rounded-lg	border-white/20	 border-2 ">
-          {/*Actual Achievement List*/}
+        {/* Achievements List Area */}
+        <div className="w-full bg-foregroundColor shadow-lg p-2 rounded-lg border-white/20 border-2 h-11/12">
+          {/* Actual Achievement List */}
           {selectedGame ? (
             <UserAchievementList key={selectedGame.appid} game={selectedGame} />
           ) : (
@@ -31,7 +30,7 @@ function Library() {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

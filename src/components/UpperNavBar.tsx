@@ -44,7 +44,7 @@ function UpperNavBar() {
     return { authenticated, id, displayName, photos };
   };
 
-  //Used to add a menu button for small screens
+  //Mobile- Used to add a menu button for small screens
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768); // Set breakpoint for mobile

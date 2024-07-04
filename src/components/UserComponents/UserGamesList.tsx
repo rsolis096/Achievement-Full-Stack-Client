@@ -1,4 +1,4 @@
-//Mounter by App.tsx
+//Mounted by App.tsx
 
 //Utility
 import { ChangeEvent, useContext, useEffect, useState } from "react";
@@ -14,6 +14,8 @@ import {
   Listbox,
   ListboxItem,
   Button,
+  Accordion,
+  AccordionItem,
 } from "@nextui-org/react";
 import SearchIcon from "@mui/icons-material/Search";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -26,40 +28,42 @@ interface UserGamesListProps {
   setSelectedGame: (game: OwnedGame) => void;
 }
 
-function UserGamesList(props: UserGamesListProps): JSX.Element {
+function UserGamesList(props: UserGamesListProps) {
+  // State and hooks
   const [userGames, setUserGames] = useState<OwnedGame[]>([]);
   const [userGamesSearch, setUserGamesSearch] = useState<OwnedGame[]>([]);
   const [gameCount, setGamesCount] = useState<number>(10);
   const [gameSearch, setGameSearch] = useState<string>("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-  // Debounce when gameSearch input value is changed (see custom hook)
   const debouncedSearchTerm = useDebounce(gameSearch, 200);
   const demoMode = useContext(DemoContext);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [accordionOpen, setAccordionOpen] = useState<boolean>(true);
+  const [selectedKeysAccordion, setSelectedKeysAccordion] = useState<Selection>(
+    new Set(["main"])
+  );
 
-  //Post All User Games from server
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // Set breakpoint for mobile
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response: AxiosResponse<OwnedGame[]> = await axios.post(
-          import.meta.env.VITE_SERVER_DOMAIN + "/api/games/getUserGames",
-          {
-            count: gameCount,
-            demo: demoMode.demoModeOn,
-          },
+          `${import.meta.env.VITE_SERVER_DOMAIN}/api/games/getUserGames`,
+          { count: gameCount, demo: demoMode.demoModeOn },
           {
             withCredentials: !demoMode.demoModeOn,
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
           }
         );
-
-        if (response.data.length) {
-          setUserGames(response.data);
-        } else {
-          console.log(response.data);
-          console.log("authentication issue");
-        }
+        setUserGames(response.data.length ? response.data : []);
       } catch (error) {
         console.error("Error fetching data:", error);
         setUserGames([]);
@@ -68,24 +72,20 @@ function UserGamesList(props: UserGamesListProps): JSX.Element {
     fetchData();
   }, [gameCount, demoMode.demoModeOn]);
 
-  //Fetch the game data from the server with search restrictions
   useEffect(() => {
     if (debouncedSearchTerm) {
       const fetchData = async () => {
         try {
           const response: AxiosResponse<OwnedGame[]> = await axios.post(
-            import.meta.env.VITE_SERVER_DOMAIN +
-              "/api/games/getUserGames/search",
+            `${
+              import.meta.env.VITE_SERVER_DOMAIN
+            }/api/games/getUserGames/search`,
             {
               demo: demoMode.demoModeOn,
               lookup: gameSearch,
-              headers: {
-                "Content-Type": "application/json",
-              },
+              headers: { "Content-Type": "application/json" },
             },
-            {
-              withCredentials: !demoMode.demoModeOn,
-            }
+            { withCredentials: !demoMode.demoModeOn }
           );
           setUserGamesSearch(response.data);
         } catch (error) {
@@ -93,53 +93,41 @@ function UserGamesList(props: UserGamesListProps): JSX.Element {
           setUserGamesSearch([]);
         }
       };
-      if (debouncedSearchTerm == "") {
-        setUserGamesSearch([]);
-      } else {
-        fetchData();
-      }
+      debouncedSearchTerm === "" ? setUserGamesSearch([]) : fetchData();
     } else {
-      setUserGamesSearch([]); // Clear the search list if the search term is empty
+      setUserGamesSearch([]);
     }
   }, [debouncedSearchTerm]);
 
-  //Handle changes to the search Input box
   const handleSearchBoxChange = (e: ChangeEvent<HTMLInputElement>) => {
-    //Making individual calls to the server per change doesn't work well. Need to find out what's going on or take a different approach
-    console.log("current search: ", e.target.value);
+    //If the accordion was closed when text was input, open it
+    setSelectedKeysAccordion(!accordionOpen ? new Set() : new Set(["main"]));
+    !accordionOpen && setAccordionOpen(true);
     setGameSearch(e.target.value);
   };
 
-  //Handles when the user clicks expand button on the game list
   const handleExpandButton = () => {
-    setGamesCount((prevState) => {
-      return prevState + 5;
-    });
+    setGamesCount((prevState) => prevState + 5);
   };
 
-  //When a game is selected, send this game back to App.tsx, it will then be used by AchievementList
   const handleGameClick = (game: OwnedGame) => {
     props.setSelectedGame(game);
   };
 
-  // Handle selection change
   const handleSelectionChange = (keys: Selection) => {
     setSelectedKeys(keys);
   };
 
-  //Render the default games list to the screen
-  const gameItemsDefault = userGames
-    .filter((item) => {
-      if (item.has_community_visible_stats) {
-        return item;
-      }
-    })
-    .map((item) => (
+  const handleAccordionToggle = () => {
+    setSelectedKeysAccordion(accordionOpen ? new Set() : new Set(["main"]));
+    setAccordionOpen(!accordionOpen);
+  };
+
+  const renderGameItems = (games: OwnedGame[]) =>
+    games.map((item) => (
       <ListboxItem
         key={item.appid}
-        classNames={{
-          selectedIcon: "text-white",
-        }}
+        classNames={{ selectedIcon: "text-white" }}
         textValue={item.name}
         onPress={() => handleGameClick(item)}
       >
@@ -150,71 +138,102 @@ function UserGamesList(props: UserGamesListProps): JSX.Element {
       </ListboxItem>
     ));
 
-  //Render the Search result games list to the screen
-  const gameItemsSearch = userGamesSearch.map((item) => (
-    <ListboxItem
-      key={item.appid}
-      textValue={item.name}
-      onClick={() => handleGameClick(item)}
-    >
-      <GameItem
-        key={item.appid}
-        game={{ name: item.name, type: "game", appid: item.appid } as App}
-      />
-    </ListboxItem>
-  ));
-
   return (
-    <>
-      {/*Search Bar*/}
+    <div className="flex flex-col h-full">
       <div style={{ color: "white" }}>
         <Input
           id="input-with-icon-adornment"
-          classNames={{
-            inputWrapper: "border-white/20",
-          }}
-          placeholder="Search for a game in your library"
+          classNames={{ inputWrapper: "border-white/20" }}
+          placeholder="Search your library"
           variant="bordered"
           onChange={handleSearchBoxChange}
-          isClearable={true}
+          isClearable
           onClear={() => setGameSearch("")}
           startContent={<SearchIcon sx={{ color: "white" }} />}
         />
       </div>
-      {/*Game List*/}
-      <div className="bg-foregroundColor/40 mt-2 h-4/6 sm:h-5/6 md:h-fit shadow-lg rounded-lg overflow-auto p-1 custom-scrollbar border-white/20	 border-2 ">
-        {userGames.length > 0 && (
-          <Listbox
-            selectedKeys={selectedKeys}
-            onSelectionChange={handleSelectionChange}
-            className="p-0 gap-0 divide-y   overflow-visible shadow-small rounded-medium "
-            disallowEmptySelection
-            variant="bordered"
-            color="default"
-            label="Selected Game"
-            selectionMode="single"
-          >
-            {/*List Items*/}
-            {userGamesSearch.length > 0 ? gameItemsSearch : gameItemsDefault}
-          </Listbox>
+      <div className="bg-foregroundColor/40 mt-2 shadow-lg rounded-lg p-1 overflow-y-auto custom-scrollbar border-white/20 border-2 flex-grow">
+        {isMobile ? (
+          <Accordion selectedKeys={selectedKeysAccordion} isCompact>
+            <AccordionItem
+              title={
+                accordionOpen ? "Your Library" : "Expand to view your library"
+              }
+              onPress={handleAccordionToggle}
+              key="main"
+            >
+              <div className="overflow-y-auto max-h-72">
+                {userGames.length > 0 && (
+                  <Listbox
+                    selectedKeys={selectedKeys}
+                    onSelectionChange={handleSelectionChange}
+                    className="p-0"
+                    disallowEmptySelection
+                    variant="bordered"
+                    color="default"
+                    label="Selected Game"
+                    selectionMode="single"
+                    bottomContent={
+                      <div>
+                        {gameSearch.length === 0 && (
+                          <Button
+                            className={
+                              "w-full mt-1 " + (isMobile ? "h-10" : "h-6")
+                            }
+                            isIconOnly
+                            variant="bordered"
+                            aria-label="Expand"
+                            onClick={handleExpandButton}
+                          >
+                            <ExpandMoreIcon className="text-white" />
+                          </Button>
+                        )}
+                      </div>
+                    }
+                  >
+                    {renderGameItems(
+                      userGamesSearch.length > 0 ? userGamesSearch : userGames
+                    )}
+                  </Listbox>
+                )}
+              </div>
+            </AccordionItem>
+          </Accordion>
+        ) : (
+          <div>
+            {userGames.length > 0 && (
+              <Listbox
+                selectedKeys={selectedKeys}
+                onSelectionChange={handleSelectionChange}
+                className="p-0"
+                disallowEmptySelection
+                variant="bordered"
+                color="default"
+                label="Selected Game"
+                selectionMode="single"
+              >
+                {renderGameItems(
+                  userGamesSearch.length > 0 ? userGamesSearch : userGames
+                )}
+              </Listbox>
+            )}
+            {gameSearch.length === 0 ? (
+              <Button
+                className={"w-full mt-1 " + (isMobile ? "h-10" : "h-6")}
+                isIconOnly
+                variant="bordered"
+                aria-label="Expand"
+                onClick={handleExpandButton}
+              >
+                <ExpandMoreIcon className="text-white" />
+              </Button>
+            ) : (
+              <p style={{ color: "white" }}>End of Results</p>
+            )}
+          </div>
         )}
       </div>
-
-      {/*Expand Button*/}
-      {gameSearch.length == 0 ? (
-        <Button
-          className="w-full h-6 mt-1"
-          isIconOnly
-          variant="bordered"
-          aria-label="Expand"
-          onClick={handleExpandButton}
-        >
-          <ExpandMoreIcon className="text-white" />
-        </Button>
-      ) : (
-        <p style={{ color: "white" }}>End of Results</p>
-      )}
-    </>
+    </div>
   );
 }
 
