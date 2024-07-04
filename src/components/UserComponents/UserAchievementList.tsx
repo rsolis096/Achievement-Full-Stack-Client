@@ -137,9 +137,9 @@ function UserAchievementList(props: UserAchievementListProps) {
 
   //Render achievement list
   return (
-    <>
-      <div>
-        {/*Game Title*/}
+    <div className="flex flex-col gap-2 h-full">
+      {/* Game Title */}
+      <div className="ml-3">
         {props.game && (
           <TitleBar
             game={props.game}
@@ -149,20 +149,21 @@ function UserAchievementList(props: UserAchievementListProps) {
             lastSync={lastSync}
             achievementsEarned={
               totalAchievementData.filter(
-                (achievement: TotalAchievement) =>
-                  achievement.userData?.achieved
+                (achievement) => achievement.userData?.achieved
               ).length
             }
           />
         )}
-        {/*Achievement List Filter Bar*/}
+      </div>
+      {/* Achievement List Filter Bar */}
+      <div>
         <UserFilterBar
           setSortFilterP={updateSortFilterState}
           setVisibleFilterP={updateVisibleFilterState}
         />
       </div>
-      <div className="overflow-auto custom-scrollbar h-5/6 mt-2">
-        {/*Draw the achievement List */}
+      {/* Achievement List */}
+      <div className="custom-scrollbar overflow-y-auto flex-grow">
         {totalAchievementData.length > 0 && !loading ? (
           <Listbox
             label="Achievement List"
@@ -171,18 +172,18 @@ function UserAchievementList(props: UserAchievementListProps) {
             variant="solid"
             selectionMode="none"
           >
-            {/*Sort the Achievement Data */}
+            {/* Sort and Filter Achievement Data */}
             {totalAchievementData
               .sort((a, b) => {
-                //Most to Least Rare
-                if (sortFilter == "mtl" && a.gameData && b.gameData) {
+                // Most to Least Rare
+                if (sortFilter === "mtl" && a.gameData && b.gameData) {
                   return (
                     (parseFloat(a.gameData?.player_percent_unlocked) ?? 0) -
                     parseFloat(b.gameData?.player_percent_unlocked ?? 0)
                   );
                 }
-                //Least to most rare
-                else if (sortFilter == "ltm" && a.gameData && b.gameData) {
+                // Least to Most Rare
+                else if (sortFilter === "ltm" && a.gameData && b.gameData) {
                   return (
                     (parseFloat(b.gameData?.player_percent_unlocked) ?? 0) -
                     parseFloat(a.gameData?.player_percent_unlocked ?? 0)
@@ -190,21 +191,21 @@ function UserAchievementList(props: UserAchievementListProps) {
                 }
                 return 0;
               })
-              //hide locked achievements
+              // Hide Locked Achievements
               .filter((item) => {
-                //If the item is unlocked, check if it should be returned
-                //Show Locked
-                if (visibleFilter == "default") {
+                if (visibleFilter === "default") {
                   return (
-                    item.userData?.achieved == 1 || item.userData?.achieved == 0
+                    item.userData?.achieved === 1 ||
+                    item.userData?.achieved === 0
                   );
-                } else if (visibleFilter == "unlocked") {
-                  return item.userData?.achieved == 1;
-                } else if (visibleFilter == "locked") {
-                  return item.userData?.achieved == 0;
+                } else if (visibleFilter === "unlocked") {
+                  return item.userData?.achieved === 1;
+                } else if (visibleFilter === "locked") {
+                  return item.userData?.achieved === 0;
                 } else {
                   return (
-                    item.userData?.achieved == 1 || item.userData?.achieved == 0
+                    item.userData?.achieved === 1 ||
+                    item.userData?.achieved === 0
                   );
                 }
               })
@@ -225,7 +226,7 @@ function UserAchievementList(props: UserAchievementListProps) {
           <div>No user achievements found.</div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

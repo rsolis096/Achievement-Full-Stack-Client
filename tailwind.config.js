@@ -15,6 +15,9 @@ export default {
         foregroundColor: "#252626",
         navbarColor: "#414749",
       },
+      height: {
+        '11/12': '94%',
+      }
     },
   },
   darkMode: "class",
