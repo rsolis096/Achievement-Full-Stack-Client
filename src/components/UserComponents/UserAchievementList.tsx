@@ -29,6 +29,7 @@ interface Result {
   userAchievements: UserAchievement[];
   time: number;
   last_sync: string;
+  message: string;
 }
 
 function UserAchievementList(props: UserAchievementListProps) {
@@ -42,7 +43,8 @@ function UserAchievementList(props: UserAchievementListProps) {
   const [syncRequested, setSyncRequested] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [lastSync, setLastSync] = useState<string>("null");
-
+  const [apiResponseMessage, setAPIResponseMessage] =
+    useState<string>("success");
   const demoMode = useContext(DemoContext);
 
   //Make a post request to the server to get user achievement info
@@ -63,6 +65,7 @@ function UserAchievementList(props: UserAchievementListProps) {
       );
       const result: Result = response.data;
       setLastSync(result.last_sync);
+      setAPIResponseMessage(result.message);
       return result.userAchievements;
     } catch (err) {
       console.log(err);
@@ -88,11 +91,16 @@ function UserAchievementList(props: UserAchievementListProps) {
     return [];
   };
 
+  //Fetches achievement info for user from server
   useEffect(() => {
     const fetchData = async () => {
       //fetch user and global achievement data
       const userAchievements: UserAchievement[] =
         await postUserAchievementData();
+      if (userAchievements.length == 0) {
+        setLoading(false);
+        throw Error("User has no achievements");
+      }
       const gameAchievements: GameAchievement[] =
         await postGameAchievementData();
 
@@ -116,8 +124,17 @@ function UserAchievementList(props: UserAchievementListProps) {
         setTotalAchievementData(combinedData);
       }
     };
-
-    fetchData();
+    try {
+      fetchData();
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.error(
+          "Unknown error occurred when fetching games achievement info"
+        );
+      }
+    }
   }, [syncRequested]);
 
   //Handles sorting order filter
@@ -222,8 +239,10 @@ function UserAchievementList(props: UserAchievementListProps) {
                 </ListboxItem>
               ))}
           </Listbox>
+        ) : apiResponseMessage === "success" || apiResponseMessage == "" ? (
+          <p>No user achievements found for this title.</p>
         ) : (
-          <div>No user achievements found.</div>
+          <p>An error occurred, ensure your account is set to public.</p>
         )}
       </div>
     </div>

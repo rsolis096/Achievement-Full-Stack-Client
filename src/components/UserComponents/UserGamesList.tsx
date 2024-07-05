@@ -43,6 +43,7 @@ function UserGamesList(props: UserGamesListProps) {
     new Set(["main"])
   );
 
+  //Checks if the page is in mobile view
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768); // Set breakpoint for mobile
@@ -52,6 +53,7 @@ function UserGamesList(props: UserGamesListProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  //Gets users library from the server
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -72,6 +74,7 @@ function UserGamesList(props: UserGamesListProps) {
     fetchData();
   }, [gameCount, demoMode.demoModeOn]);
 
+  //Used to handle search queries
   useEffect(() => {
     if (debouncedSearchTerm) {
       const fetchData = async () => {
@@ -124,19 +127,21 @@ function UserGamesList(props: UserGamesListProps) {
   };
 
   const renderGameItems = (games: OwnedGame[]) =>
-    games.map((item) => (
-      <ListboxItem
-        key={item.appid}
-        classNames={{ selectedIcon: "text-white" }}
-        textValue={item.name}
-        onPress={() => handleGameClick(item)}
-      >
-        <GameItem
+    games
+      .filter((item: OwnedGame) => item.has_community_visible_stats)
+      .map((item) => (
+        <ListboxItem
           key={item.appid}
-          game={{ name: item.name, type: "game", appid: item.appid } as App}
-        />
-      </ListboxItem>
-    ));
+          classNames={{ selectedIcon: "text-white" }}
+          textValue={item.name}
+          onPress={() => handleGameClick(item)}
+        >
+          <GameItem
+            key={item.appid}
+            game={{ name: item.name, type: "game", appid: item.appid } as App}
+          />
+        </ListboxItem>
+      ));
 
   return (
     <div className="flex flex-col h-full">
