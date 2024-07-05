@@ -72,8 +72,9 @@ function About() {
         </li>
         <li>We do not share this information with any third parties.</li>
         <li>
-          You may delete all your account information via the button at the
-          bottom of this page. (You must be logged in)
+          You may delete all your account information from our database by
+          clicking the button at the bottom of this page. (You must be logged
+          in)
         </li>
         <li>
           {" "}
@@ -130,6 +131,11 @@ function About() {
       ) : (
         <p>Account Deleted</p>
       )}
+      <br />
+      <br />
+      <br />
+      <br />
+      <p>This site is not affiliated with Steam or Valve.</p>
     </div>
   );
 }
