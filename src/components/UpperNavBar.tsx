@@ -73,10 +73,6 @@ function UpperNavBar() {
             response.data.user as never
           );
           extractedUser.authenticated = true;
-          console.log(
-            "Authenticated successfully, Logged in as : ",
-            extractedUser
-          );
           demoMode.setDemoMode(false);
           setUser(extractedUser);
         } else {
@@ -100,7 +96,6 @@ function UpperNavBar() {
         });
       }
     };
-    console.log("upper navbar demo mode:", demoMode.demoModeOn);
     if (!demoMode.demoModeOn) {
       checkAuthentication();
     }
