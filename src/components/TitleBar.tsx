@@ -30,9 +30,9 @@ function TitleBar(props: TitleBarProps) {
   };
 
   return (
-    <>
-      <div className="flex flex-row ">
-        <div className="w-1/2 md:w-1/4 lg:w-1/6">
+    <div className="flex flex-row ">
+      <div className="flex flex-col sm:flex-row gap-2">
+        <div className="w-5/6 sm:w-2/5">
           <Image
             removeWrapper
             alt={props.game.name}
@@ -40,7 +40,7 @@ function TitleBar(props: TitleBarProps) {
             src={getImageURL(String(props.game.appid))}
           />
         </div>
-        <div className="ml-2 flex-rows">
+        <div className="flex flex-col gap-1">
           <div>
             <h1 className="text-xl" style={{ color: "white" }}>
               {props.game.name}
@@ -75,27 +75,28 @@ function TitleBar(props: TitleBarProps) {
             </h1>
           </div>
         </div>
-
-        {props.achievementsEarned != -1 && (
-          <div className="flex flex-cols text-white">
+      </div>
+      {props.achievementsEarned != -1 && (
+        <div className="flex flex-row w-fit gap-4 mr-2 text-white">
+          <div>
             {props.lastSync != "null" && (
-              <div>
+              <>
                 <p>Last Synced: </p>
                 <p>{props.lastSync}</p>
-              </div>
+              </>
             )}
-            <div>
-              <Button
-                className="mt-2"
-                isIconOnly
-                onPress={handleSyncButton}
-                endContent={<SyncIcon />}
-              />
-            </div>
           </div>
-        )}
-      </div>
-    </>
+          <div>
+            <Button
+              className="mt-2"
+              isIconOnly
+              onPress={handleSyncButton}
+              endContent={<SyncIcon />}
+            />
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

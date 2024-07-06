@@ -64,7 +64,7 @@ function UserAchievementList(props: UserAchievementListProps) {
         }
       );
       const result: Result = response.data;
-      setLastSync(result.last_sync);
+      setLastSync(convertUTCToLocal(result.last_sync));
       setAPIResponseMessage(result.message);
       return result.userAchievements;
     } catch (err) {
@@ -146,6 +146,45 @@ function UserAchievementList(props: UserAchievementListProps) {
   const updateVisibleFilterState = (type: string) => {
     setVisibleFilter(type);
   };
+
+  // Convert the UTC time string to the local timezone
+  function convertUTCToLocal(utcTimeString: string): string {
+    // Parse the UTC time string to create a Date object
+    const [datePart, timePart]: string[] = utcTimeString.split(", ");
+    const [month, day, year]: string[] = datePart.split("/");
+    const [time, modifier]: string[] = timePart.split(" ");
+    // eslint-disable-next-line prefer-const
+    let [hours, minutes]: number[] = time.split(":").map(Number);
+
+    if (modifier === "PM" && hours < 12) {
+      hours += 12;
+    } else if (modifier === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    // Create a Date object in UTC
+    const utcDate: Date = new Date(
+      Date.UTC(
+        2000 + Number(year),
+        Number(month) - 1,
+        Number(day),
+        hours,
+        minutes
+      )
+    );
+
+    // Format the Date object in the local timezone
+    const localTimeString: string = utcDate.toLocaleString("en-US", {
+      year: "2-digit",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    return localTimeString;
+  }
 
   //Wait until totalData has been completed
   if (loading) {
