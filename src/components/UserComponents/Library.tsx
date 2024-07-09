@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { OwnedGame } from "../interfaces/types.tsx";
+import { OwnedGame } from "../../interfaces/types.tsx";
 
-import UserAchievementList from "./UserComponents/UserAchievementList.tsx";
-import UserGamesList from "./UserComponents/UserGamesList.tsx";
+import UserAchievementList from "./UserAchievementList.tsx";
+import UserGamesList from "./UserGamesList.tsx";
 
 function Library() {
   const [selectedGame, setSelectedGame] = useState<OwnedGame>();

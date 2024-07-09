@@ -17,7 +17,7 @@ import "../../styles/CustomScrollbar.css";
 //Components
 import UserAchievementItem from "./UserAchievementItem.tsx";
 import UserFilterBar from "../UserComponents/UserFilterBar.tsx";
-import TitleBar from "../TitleBar.tsx";
+import TitleBar from "./UserTitleBar.tsx";
 import { DemoContext } from "../../context/DemoModeContext.tsx";
 
 interface UserAchievementListProps {
