@@ -12,7 +12,7 @@ import "../../styles/CustomScrollbar.css";
 //Components
 import GlobalAchievementItem from "./GlobalAchievementItem.tsx";
 //import FilterBar from "../FilterBar.tsx";
-import TitleBar from "../TitleBar.tsx";
+import GlobalTitleBar from "../GlobalComponents/GlobalTitleBar.tsx";
 
 interface GlobalAchievementListProps {
   //The current selected Game
@@ -43,7 +43,7 @@ function GlobalAchievementList(props: GlobalAchievementListProps) {
 
   const [loading, setLoading] = useState(true);
 
-  //Make a post request to the server to get global achievement info
+  //Post request to the server to get global achievement info
   const postGameAchievementData = async (): Promise<GameAchievement[]> => {
     try {
       const response: AxiosResponse<GameAchievement[]> = await axios.post(
@@ -67,6 +67,7 @@ function GlobalAchievementList(props: GlobalAchievementListProps) {
     return [];
   };
 
+  //Post request to the server to get the app info
   const postAppInfo = async (): Promise<App> => {
     try {
       const response: AxiosResponse<App> = await axios.post(
@@ -76,20 +77,25 @@ function GlobalAchievementList(props: GlobalAchievementListProps) {
           headers: { "Content-Type": "application/json" },
         }
       );
-      return response.data;
+      return response.data as App;
     } catch (err) {
       console.log(err);
     }
     return { name: "null", type: "null", appid: 0 } as App;
   };
 
+  //Make the post requests to the server upon mount
   useEffect(() => {
     const fetchData = async () => {
       //fetch user and global achievement data
       const gameAchievements: GameAchievement[] =
         await postGameAchievementData();
+      //Fetch App Info
       const app: App = await postAppInfo();
+      console.log(app);
+      //Turn off loading
       setLoading(false);
+      //Save game to state variable
       setAppInfo(app);
       setGameAchievementData(gameAchievements);
     };
@@ -99,15 +105,21 @@ function GlobalAchievementList(props: GlobalAchievementListProps) {
 
   //Wait until totalData has been completed
   if (loading) {
-    if (gameAchievementData.length == 0) {
+    return <div style={{ color: "white" }}>Loading...</div>;
+  } else if (gameAchievementData.length == 0) {
+    if (appInfo.type != "game") {
       return (
-        <div style={{ color: "white" }}>
-          No achievements associated with this title.
-        </div>
+        <p>
+          {appInfo.name} with appid: {appInfo.appid} is not a game.
+        </p>
       );
-    } else {
-      return <div style={{ color: "white" }}>Loading...</div>;
     }
+
+    return (
+      <div style={{ color: "white" }}>
+        No achievements associated with this title.
+      </div>
+    );
   }
 
   //Render achievement list
@@ -117,21 +129,7 @@ function GlobalAchievementList(props: GlobalAchievementListProps) {
         <>
           <div>
             {/*Game Title*/}
-            <TitleBar
-              game={{
-                name: appInfo.name,
-                appid: appInfo.appid,
-                playtime_forever: -1,
-                has_community_visible_stats: false,
-              }}
-              achievementsSize={gameAchievementData.length}
-              achievementsEarned={-1}
-              setSyncAchievements={(val: number) => {
-                console.log(val);
-              }}
-              syncAchievements={0}
-              lastSync="null"
-            />
+            <GlobalTitleBar app={appInfo} />
           </div>
 
           {/*Achievement List Filter Bar*/}
@@ -166,7 +164,7 @@ function GlobalAchievementList(props: GlobalAchievementListProps) {
           </div>
         </>
       ) : (
-        <p>{appInfo.name} has no achievements</p>
+        <p>AppID : {appInfo.appid} is not a valid app.</p>
       )}
     </>
   );

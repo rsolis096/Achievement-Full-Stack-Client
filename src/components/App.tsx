@@ -11,10 +11,10 @@ import "../styles/CustomScrollbar.css";
 import { DemoContext } from "../context/DemoModeContext.tsx";
 import { SteamUserContext } from "../context/SteamUserContext.tsx";
 import UpperNavBar from "./UpperNavBar.tsx";
-import Library from "./Library.tsx";
+import Library from "./UserComponents/Library.tsx";
 import Home from "./Home.tsx";
 import About from "./About.tsx";
-import GameView from "./GameView.tsx";
+import GameView from "./GlobalComponents/GameView.tsx";
 
 function App() {
   //Define state variables

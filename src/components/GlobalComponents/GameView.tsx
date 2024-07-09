@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 
 //Components
-import GlobalAchievementList from "./GlobalComponents/GlobalAchievementList";
+import GlobalAchievementList from "./GlobalAchievementList";
 
 function GameView() {
   const { appid } = useParams<string>();

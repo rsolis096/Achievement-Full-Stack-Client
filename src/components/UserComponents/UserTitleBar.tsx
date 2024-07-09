@@ -4,10 +4,10 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import SyncIcon from "@mui/icons-material/Sync";
 
 // Utility
-import { OwnedGame } from "../interfaces/types.tsx";
+import { OwnedGame } from "../../interfaces/types.tsx";
 import { Button } from "@nextui-org/react";
 
-interface TitleBarProps {
+interface UserTitleBarProps {
   game: OwnedGame;
   achievementsSize: number;
   achievementsEarned: number;
@@ -23,7 +23,7 @@ function getImageURL(id: string) {
   return imageURL + id + imageURLEnd;
 }
 
-function TitleBar(props: TitleBarProps) {
+function UserUserTitleBar(props: UserTitleBarProps) {
   const handleSyncButton = () => {
     //Call the server to sync the achievements for this game
     props.setSyncAchievements(props.syncAchievements + 1);
@@ -48,56 +48,47 @@ function TitleBar(props: TitleBarProps) {
           </div>
 
           {/*Everything below is user specific*/}
-
-          {props.achievementsEarned != -1 && (
-            <div>
-              <h1 className="text-lg" style={{ color: "white" }}>
-                Total Playtime: {(props.game.playtime_forever / 60).toFixed(1)}{" "}
-                hours
-              </h1>
-            </div>
-          )}
+          <div>
+            <h1 className="text-lg" style={{ color: "white" }}>
+              Total Playtime: {(props.game.playtime_forever / 60).toFixed(1)}{" "}
+              hours
+            </h1>
+          </div>
 
           <div>
             <h1 className="text-lg" style={{ color: "white" }}>
-              {props.achievementsEarned != -1 ? (
-                <>
-                  {" "}
-                  Achievements Earned: {props.achievementsEarned} /{" "}
-                  {props.achievementsSize}
-                  {props.achievementsEarned - props.achievementsSize == 0 && (
-                    <EmojiEventsIcon />
-                  )}
-                </>
-              ) : (
-                <p>Total Achievements: {props.achievementsSize}</p>
-              )}
+              <p>
+                Achievements Earned: {props.achievementsEarned} /{" "}
+                {props.achievementsSize}
+                {props.achievementsEarned - props.achievementsSize == 0 && (
+                  <EmojiEventsIcon />
+                )}
+              </p>
+              <p>Total Achievements: {props.achievementsSize}</p>
             </h1>
           </div>
         </div>
       </div>
-      {props.achievementsEarned != -1 && (
-        <div className="flex flex-row w-fit gap-4 mr-2 text-white">
-          <div>
-            {props.lastSync != "null" && (
-              <>
-                <p>Last Synced: </p>
-                <p>{props.lastSync}</p>
-              </>
-            )}
-          </div>
-          <div>
-            <Button
-              className="mt-2"
-              isIconOnly
-              onPress={handleSyncButton}
-              endContent={<SyncIcon />}
-            />
-          </div>
+      <div className="flex flex-row w-fit gap-4 mr-2 text-white">
+        <div>
+          {props.lastSync != "null" && (
+            <>
+              <p>Last Synced: </p>
+              <p>{props.lastSync}</p>
+            </>
+          )}
         </div>
-      )}
+        <div>
+          <Button
+            className="mt-2"
+            isIconOnly
+            onPress={handleSyncButton}
+            endContent={<SyncIcon />}
+          />
+        </div>
+      </div>
     </div>
   );
 }
 
-export default TitleBar;
+export default UserUserTitleBar;
