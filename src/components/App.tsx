@@ -55,6 +55,8 @@ function App() {
                   <Route path="/about" element={<About />} />
                   <Route path="/library/demo" element={<Library />} />
                   <Route path="/library/:userId" element={<Library />} />
+                  <Route path="/tracklist/demo" element={<Library />} />
+                  <Route path="/tracklist/:userId" element={<Library />} />
                 </Routes>
               </div>
             </div>

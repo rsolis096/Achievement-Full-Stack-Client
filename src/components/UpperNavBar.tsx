@@ -109,6 +109,8 @@ function UpperNavBar() {
       setSelectedLink("library");
     } else if (path.includes("/about")) {
       setSelectedLink("about");
+    } else if (path.includes("/tracklist")) {
+      setSelectedLink("tracklist");
     } else {
       setSelectedLink("home");
     }
@@ -161,6 +163,12 @@ function UpperNavBar() {
       href: `/library/${demoMode.demoModeOn ? "demo" : user.id}`,
       authRequired: true,
     },
+    {
+      key: "tracklist",
+      label: "Track List",
+      href: `/tracklist/${demoMode.demoModeOn ? "demo" : user.id}`,
+      authRequired: true,
+    },
     { key: "about", label: "About", href: "/about" },
   ];
 
@@ -172,15 +180,17 @@ function UpperNavBar() {
     label: string;
   }
 
-  const NavItem = (prop: NavItemProp) => (
-    <NavbarItem isActive>
-      <Link underline="hover" size="lg" href={prop.href} aria-current="page">
-        <p className={prop.isActive ? "text-orange-400" : "text-white"}>
-          {prop.label}
-        </p>
-      </Link>
-    </NavbarItem>
-  );
+  const NavItem = (prop: NavItemProp) => {
+    return (
+      <NavbarItem isActive>
+        <Link underline="hover" size="lg" href={prop.href} aria-current="page">
+          <p className={prop.isActive ? "text-orange-400" : "text-white"}>
+            {prop.label}
+          </p>
+        </Link>
+      </NavbarItem>
+    );
+  };
 
   return (
     <Navbar
@@ -250,7 +260,7 @@ function UpperNavBar() {
                 <Link href={item.href} size="lg" underline="hover">
                   <p
                     className={
-                      selectedLink.includes(item.label.toLowerCase())
+                      selectedLink.includes(item.key.toLowerCase())
                         ? "text-orange-400"
                         : "text-white"
                     }
