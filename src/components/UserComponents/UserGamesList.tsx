@@ -2,6 +2,7 @@
 
 //Utility
 import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { DemoContext } from "../../context/DemoModeContext.tsx";
 import useDebounce from "../../hooks/useDebounce.tsx";
 import axios, { AxiosResponse } from "axios";
@@ -42,6 +43,7 @@ function UserGamesList(props: UserGamesListProps) {
   const [selectedKeysAccordion, setSelectedKeysAccordion] = useState<Selection>(
     new Set(["main"])
   );
+  const location = useLocation();
 
   //Checks if the page is in mobile view
   useEffect(() => {
@@ -57,8 +59,13 @@ function UserGamesList(props: UserGamesListProps) {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        //Check url for navbar highlighting
+        let endpoint: string = "getUserGames";
+        if (location.pathname.includes("tracklist")) {
+          endpoint = "getTracklist";
+        }
         const response: AxiosResponse<OwnedGame[]> = await axios.post(
-          `${import.meta.env.VITE_SERVER_DOMAIN}/api/games/getUserGames`,
+          `${import.meta.env.VITE_SERVER_DOMAIN}/api/games/${endpoint}`,
           { count: gameCount, demo: demoMode.demoModeOn },
           {
             withCredentials: !demoMode.demoModeOn,
